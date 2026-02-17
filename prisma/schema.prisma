@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  firstName     String
+  lastName      String
+  role          String    @default("general") // "admin" | "general"
+  nickname      String?
+  bio           String?
+  githubUrl     String?
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  articles      Article[]
+  comments      Comment[]
+  bookmarks     Bookmark[]
+  activities    Activity[]
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  status      String   @default("draft") // "published" | "draft"
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  views       Int      @default(0)
+  likes       Int      @default(0)
+
+  tags        ArticleTag[]
+  comments    Comment[]
+  bookmarks   Bookmark[]
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  color     String       @default("#000000")
+  status    String       @default("published")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  articles  ArticleTag[]
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  articleId String
+  authorId  String
+  status    String   @default("published")
+  createdAt DateTime @default(now())
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  adminId     String
+  actionType  String
+  targetType  String
+  targetId    String
+  targetName  String
+  description String
+  timestamp   DateTime @default(now())
+
+  admin       User     @relation(fields: [adminId], references: [id])
+}
