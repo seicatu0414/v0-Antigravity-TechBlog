@@ -50,6 +50,11 @@ export async function getSecret(secretName: string): Promise<string | undefined>
             return response.SecretString;
         }
 
+        if (response.SecretBinary) {
+            // AWS SDK v3 returns Uint8Array for Blob types
+            return Buffer.from(response.SecretBinary).toString('utf-8');
+        }
+
         Logger.warn(`Secret ${secretName} retrieved from AWS but has no string value`);
         return undefined;
 
