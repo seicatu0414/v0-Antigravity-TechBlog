@@ -1,17 +1,21 @@
 export class Logger {
     static mask(message: string): string {
         const sensitivePatterns = [
-            /["']?password["']?\s*[:=]\s*["']?([^"'\s]+)["']?/gi,
-            /["']?token["']?\s*[:=]\s*["']?([^"'\s]+)["']?/gi,
-            /["']?secret["']?\s*[:=]\s*["']?([^"'\s]+)["']?/gi,
-            /["']?key["']?\s*[:=]\s*["']?([^"'\s]+)["']?/gi,
-            /["']?email["']?\s*[:=]\s*["']?([^"'\s]+)["']?/gi,
+            /(["]?password["]?)\s*[:=]\s*(?:(["'])(.*?)\2|([^"'\s]+))/gi,
+            /(["]?token["]?)\s*[:=]\s*(?:(["'])(.*?)\2|([^"'\s]+))/gi,
+            /(["]?secret["]?)\s*[:=]\s*(?:(["'])(.*?)\2|([^"'\s]+))/gi,
+            /(["]?key["]?)\s*[:=]\s*(?:(["'])(.*?)\2|([^"'\s]+))/gi,
+            /(["]?email["]?)\s*[:=]\s*(?:(["'])(.*?)\2|([^"'\s]+))/gi,
         ];
 
         let maskedMessage = message;
         sensitivePatterns.forEach((pattern) => {
-            maskedMessage = maskedMessage.replace(pattern, (match, p1) => {
-                return match.replace(p1, '****');
+            maskedMessage = maskedMessage.replace(pattern, (match, key, quote, quotedValue, unquotedValue) => {
+                const valueToMask = quote ? quotedValue : unquotedValue;
+                if (valueToMask) {
+                    return match.replace(valueToMask, '****');
+                }
+                return match;
             });
         });
 

@@ -13,9 +13,8 @@ function getClient() {
     // In development, we might not want to initialize the client at all if we don't have credentials
     // But if we do need it (e.g. testing AWS connectivity), we can initialize it here.
     // For now, let's assume we ONLY use AWS in non-development or if explicitly configured.
-    client = new SecretsManagerClient({
-        region: process.env.AWS_REGION || "ap-northeast-1",
-    });
+    const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
+    client = new SecretsManagerClient(region ? { region } : {});
     return client;
 }
 
