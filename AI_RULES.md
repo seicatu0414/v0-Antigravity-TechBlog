@@ -44,3 +44,8 @@
 - Session内の内容は全て日本語で回答すること
 - 会話の最後に不要になったコードを探し出し必ず消すこと
 
+## 6. パッケージ管理 (Package Management)
+- **パッケージマネージャー**: `pnpm` を使用すること。`npm` や `yarn` は使用しない。
+- **ロックファイル**: `pnpm-lock.yaml` のみを管理し、`package-lock.json` や `yarn.lock` は生成・コミットしない。
+- **依存関係の更新**: `package.json` に変更を加えた場合（新しいパッケージの追加など）、必ず `pnpm install` を実行して `pnpm-lock.yaml` を更新すること。
+
