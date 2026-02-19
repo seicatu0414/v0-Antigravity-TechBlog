@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, Bookmark, Share2 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { getArticle } from "@/app/actions"
+import { BookmarkButton } from "@/components/bookmark-button"
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -39,9 +40,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   {article.likes}
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Bookmark className="h-4 w-4 mr-1" />
-                  {article.bookmarks}
+                  <Heart className="h-4 w-4 mr-1" />
+                  {article.likes}
                 </Button>
+                <BookmarkButton
+                  articleId={article.id}
+                  initialIsBookmarked={article.isBookmarked}
+                  initialCount={article.bookmarks}
+                />
                 <Button variant="outline" size="icon">
                   <Share2 className="h-4 w-4" />
                 </Button>

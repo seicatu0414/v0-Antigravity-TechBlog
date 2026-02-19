@@ -5,53 +5,54 @@ This document outlines the planned features and development roadmap for the proj
 ## Planned Features (Backlog)
 ### 1. ユーザー認証・認可
 - **ログイン画面**: `/login` (Exist)
-  - [ ] メールアドレス + パスワード認証
-  - [ ] Cookie + JWT認証
-  - [ ] 新規登録ボタン → プロフィール編集画面へ遷移
+  - [x] メールアドレス + パスワード認証
+  - [x] Cookie + JWT認証
+  - [x] 新規登録ボタン → プロフィール編集画面へ遷移
 
 - **認証システム**:
-  - [ ] `lib/auth-system.ts`: JWT統一認証
-  - [ ] `lib/utils/cookie-auth.ts`: Cookie認証ヘルパー
-  - [ ] `lib/actions/auth.ts`: Server Actions
+  - [x] `lib/auth-system.ts`: JWT統一認証
+  - [x] `lib/utils/cookie-auth.ts`: Cookie認証ヘルパー
+  - [x] `lib/actions/auth.ts`: Server Actions
 
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
   - [ ] Markdownエディタ (react-markdown)
-  - [ ] ライブプレビュー
+  - [x] ライブプレビュー (Preview Page)
   - [ ] タグ入力 (自由表記)
   - [ ] カバー画像アップロード
-  - [ ] 投稿ボタン → 記事一覧へ遷移
+  - [x] 投稿ボタン → 記事一覧へ遷移
 
 - **記事編集**: `/articles/[id]/edit`
   - [ ] 既存記事の編集
   - [ ] 下書き保存
 
 - **記事詳細**: `/articles/[id]`
-  - [ ] Markdown表示
+  - [x] Markdown表示
   - [ ] コメント表示
   - [ ] ブックマークボタン
 
 ### 3. 記事検索・フィルタリング
 - **記事一覧画面**: `/` (ホーム) (Exist)
-  - [ ] タグフィルター
+  - [x] タグフィルター (Backend logic exists, UI partially connected)
   - [ ] ページネーション (20件ずつ)
   - [ ] 「さらに表示」ボタン
+  - [x] ヘッダー検索
 
 ### 4. ブックマーク機能
 - **ブックマーク追加/削除**:
-  - [ ] 記事詳細画面からワンクリック
-  - [ ] `lib/actions/bookmarks.ts`
+  - [x] 記事詳細画面からワンクリック
+  - [x] `lib/actions/bookmarks.ts` (Implemented in `app/actions.ts`)
 
 - **ブックマーク一覧**:
-  - [ ] マイページで確認可能
+  - [x] マイページで確認可能
   - [ ] タブ切り替え (投稿記事 / ブックマーク)
 
 ### 5. プロフィール管理
 - **プロフィール画面**: `/profile/[id]` (Exist)
-  - [ ] 姓、名、ニックネーム
+  - [x] 姓、名、ニックネーム
   - [ ] GitHub URL
   - [ ] 自己紹介
-  - [ ] 投稿記事一覧
+  - [x] 投稿記事一覧
   - [ ] 編集ボタン → プロフィール編集画面へ
 
 - **プロフィール編集画面**: `/mypage` (Exist)
@@ -88,8 +89,8 @@ This document outlines the planned features and development roadmap for the proj
 2. ✅ ニックネーム確認・編集
 3. ✅ GitHub URL確認・編集
 4. ✅ 自己紹介確認・編集
-5. ✅ 投稿記事 / ブックマーク タブ切り替え
-6. ✅ 投稿記事カード表示
+5. [ ] 投稿記事 / ブックマーク タブ切り替え
+6. [ ] 投稿記事カード表示
 7. ✅ ブックマーク記事カード表示
 
 ## 管理者機能
@@ -135,7 +136,11 @@ This document outlines the planned features and development roadmap for the proj
 - 並び順変更
 
 ## In Progress
-- [ ] 
+- [ ] Profile Editing
 
 ## Completed
-- [ ] 
+- [x] User Authentication (Login, Register, Logout)
+- [x] Basic Article Creation & Viewing
+- [x] Code Review Fixes (Security, Architecture, Quality)
+- [x] Header Search
+- [x] Bookmark Feature
