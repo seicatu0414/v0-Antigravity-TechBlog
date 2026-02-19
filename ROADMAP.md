@@ -29,7 +29,7 @@ This document outlines the planned features and development roadmap for the proj
 - **記事詳細**: `/articles/[id]`
   - [x] Markdown表示
   - [ ] コメント表示
-  - [ ] ブックマークボタン
+  - [x] ブックマークボタン
 
 ### 3. 記事検索・フィルタリング
 - **記事一覧画面**: `/` (ホーム) (Exist)

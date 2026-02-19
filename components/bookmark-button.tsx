@@ -30,14 +30,14 @@ export function BookmarkButton({ articleId, initialIsBookmarked = false, initial
                 if (result.error) {
                     throw new Error(result.error)
                 }
-            } catch (error: any) {
+            } catch (error: unknown) {
                 // Revert on error
                 setIsBookmarked(previousState)
                 setCount(previousCount)
 
                 // If unauthorized (checked by error message or logic), redirect to login
                 // For now, assuming standard error strings
-                if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+                if (error instanceof Error && (error.message === 'Unauthorized' || error.message === 'Invalid token')) {
                     router.push('/login')
                 } else {
                     alert('ブックマークの更新に失敗しました。')
@@ -51,8 +51,8 @@ export function BookmarkButton({ articleId, initialIsBookmarked = false, initial
             onClick={handleToggle}
             disabled={isPending}
             className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${isBookmarked
-                    ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             aria-label={isBookmarked ? "ブックマークを解除" : "ブックマークに追加"}
         >

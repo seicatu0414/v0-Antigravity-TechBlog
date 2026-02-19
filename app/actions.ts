@@ -202,10 +202,10 @@ export async function getPopularTags(): Promise<string[]> {
 export async function toggleBookmark(articleId: string) {
     try {
         const token = await getAuthCookie()
-        if (!token) throw new Error('Unauthorized')
+        if (!token) return { error: 'Unauthorized' }
 
         const payload = await verifyToken(token)
-        if (!payload || !payload.userId) throw new Error('Invalid token')
+        if (!payload || !payload.userId) return { error: 'Invalid token' }
 
         const userId = payload.userId as string
 

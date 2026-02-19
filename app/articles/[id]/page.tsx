@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Heart, Bookmark, Share2 } from "lucide-react"
+import { Heart, Share2 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { getArticle } from "@/app/actions"
 import { BookmarkButton } from "@/components/bookmark-button"
@@ -35,10 +35,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
-                  <Heart className="h-4 w-4 mr-1" />
-                  {article.likes}
-                </Button>
                 <Button variant="outline" size="sm">
                   <Heart className="h-4 w-4 mr-1" />
                   {article.likes}
