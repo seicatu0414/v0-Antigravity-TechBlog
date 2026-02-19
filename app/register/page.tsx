@@ -1,39 +1,19 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useActionState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { register } from "@/lib/actions/auth"
+
+const initialState = {
+  message: '',
+}
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const [username, setUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (password !== confirmPassword) {
-      alert("パスワードが一致しません")
-      return
-    }
-
-    setIsLoading(true)
-
-    // Mock registration - in real app, this would call an API
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/login")
-    }, 1000)
-  }
+  const [state, formAction, isPending] = useActionState(register, initialState)
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
@@ -43,26 +23,24 @@ export default function RegisterPage() {
           <CardDescription className="text-center">アカウントを作成して技術記事を共有しましょう</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">ユーザー名</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="techuser"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+          <form action={formAction} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="lastName">姓</Label>
+                <Input id="lastName" name="lastName" placeholder="山田" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="firstName">名</Label>
+                <Input id="firstName" name="firstName" placeholder="太郎" required />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">メールアドレス</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="example@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -70,28 +48,30 @@ export default function RegisterPage() {
               <Label htmlFor="password">パスワード</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
               />
             </div>
+            {/* 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">パスワード（確認）</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={8}
               />
             </div>
-            <Button type="submit" className="w-full bg-[#E2703A] hover:bg-[#E2703A]/90 text-white" disabled={isLoading}>
-              {isLoading ? "登録中..." : "新規登録"}
+            */}
+            {state?.message && (
+              <p className="text-sm text-red-500 text-center">{state.message}</p>
+            )}
+            <Button type="submit" className="w-full bg-[#E2703A] hover:bg-[#E2703A]/90 text-white" disabled={isPending}>
+              {isPending ? "登録中..." : "新規登録"}
             </Button>
           </form>
         </CardContent>
