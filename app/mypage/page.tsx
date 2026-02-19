@@ -3,9 +3,7 @@ import { verifyToken } from '@/lib/auth-system'
 import { redirect } from 'next/navigation'
 import { logout } from '@/lib/actions/auth'
 import { Button } from '@/components/ui/button'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
 
 export default async function MyPage() {
   const token = await getAuthCookie()

@@ -1,13 +1,13 @@
 'use server'
 
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { hashPassword, comparePassword } from '@/lib/utils/password'
 import { signToken } from '@/lib/auth-system'
 import { setAuthCookie, removeAuthCookie } from '@/lib/utils/cookie-auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-const prisma = new PrismaClient()
+
 
 export async function login(prevState: any, formData: FormData) {
     const email = formData.get('email') as string
@@ -83,5 +83,6 @@ export async function register(prevState: any, formData: FormData) {
 
 export async function logout() {
     await removeAuthCookie()
+    revalidatePath('/')
     redirect('/login')
 }

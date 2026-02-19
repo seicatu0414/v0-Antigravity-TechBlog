@@ -20,7 +20,6 @@ export async function verifyToken(token: string): Promise<any> {
         const { payload } = await jwtVerify(token, secret)
         return payload
     } catch (error) {
-        console.error('[AuthSystem] Verify error:', error)
         return null
     }
 }

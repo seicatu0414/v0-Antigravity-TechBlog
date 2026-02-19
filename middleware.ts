@@ -10,8 +10,6 @@ export async function middleware(request: NextRequest) {
     const protectedRoutes = ['/mypage', '/post', '/admin']
     const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
-    console.log(`[Middleware] Path: ${pathname}, Token: ${token ? 'Present' : 'Missing'}, Protected: ${isProtectedRoute}`)
-
     if (isProtectedRoute) {
         if (!token) {
             return NextResponse.redirect(new URL('/login', request.url))
