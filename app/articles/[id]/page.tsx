@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, Bookmark, Share2 } from "lucide-react"
-import { mockArticles } from "@/lib/mock-data"
 import ReactMarkdown from "react-markdown"
+import { getArticle } from "@/app/actions"
 
-export default function ArticlePage({ params }: { params: { id: string } }) {
-  const article = mockArticles.find((a) => a.id === params.id)
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const article = await getArticle(id)
 
   if (!article) {
     notFound()

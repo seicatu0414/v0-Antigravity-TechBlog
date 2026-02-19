@@ -5,7 +5,6 @@ import { ArticleCard } from "@/components/article-card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
-import { popularTags } from "@/lib/mock-data"
 // We use a type that matches the shape we expect. 
 // Since we can't easily import from server action file if it has 'use server' and imports Node-only stuff in some configs, 
 // we might define interface here or assume it passes.
@@ -27,7 +26,7 @@ interface Article {
     updatedAt: string
 }
 
-export function ArticleList({ initialArticles }: { initialArticles: Article[] }) {
+export function ArticleList({ initialArticles, popularTags }: { initialArticles: Article[], popularTags: string[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")

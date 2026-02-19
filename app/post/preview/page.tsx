@@ -9,6 +9,7 @@ import { ArrowLeft, Send } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { createArticle } from "@/app/actions"
 
 interface PreviewArticle {
   title: string
@@ -29,11 +30,24 @@ export default function PreviewPage() {
     }
   }, [router])
 
-  const handlePublish = () => {
-    // Mock publish - in real app, this would call an API
-    sessionStorage.removeItem("previewArticle")
-    alert("記事を投稿しました!")
-    router.push("/")
+
+  // ... inside component ...
+
+  const handlePublish = async () => {
+    if (!article) return
+
+    const formData = new FormData()
+    formData.append("title", article.title)
+    formData.append("content", article.content)
+    formData.append("tags", article.tags.join(","))
+
+    try {
+      sessionStorage.removeItem("previewArticle")
+      await createArticle(formData) // This will redirect
+    } catch (error) {
+      console.error("Failed to publish:", error)
+      alert("投稿に失敗しました")
+    }
   }
 
   if (!article) {

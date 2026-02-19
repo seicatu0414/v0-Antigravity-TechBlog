@@ -1,10 +1,11 @@
 'use server'
 
-import { PrismaClient } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
+import { getAuthCookie } from '@/lib/utils/cookie-auth'
+import { verifyToken } from '@/lib/auth-system'
+import { Logger } from '@/lib/logger'
 
 // UI-compatible Article type (matching mock-data.ts structure approx)
 export type UIArticle = {
@@ -46,7 +47,7 @@ export async function getArticles(): Promise<UIArticle[]> {
         return articles.map((article) => ({
             id: article.id,
             title: article.title,
-            content: article.content, // content might be long, but UI seems to expect it? simple listing maybe doesn't need full content
+            content: article.content,
             excerpt: article.excerpt || '',
             author: {
                 name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
@@ -60,43 +61,85 @@ export async function getArticles(): Promise<UIArticle[]> {
             updatedAt: article.updatedAt.toISOString().split('T')[0],
         }))
     } catch (error) {
-        console.error('Failed to fetch articles:', error)
+        Logger.error('Failed to fetch articles:', error)
         return []
+    }
+}
+
+export async function getArticle(id: string): Promise<UIArticle | null> {
+    try {
+        const article = await prisma.article.findUnique({
+            where: { id },
+            include: {
+                author: true,
+                tags: {
+                    include: {
+                        tag: true
+                    }
+                }
+            },
+        })
+
+        if (!article) return null
+
+        return {
+            id: article.id,
+            title: article.title,
+            content: article.content,
+            excerpt: article.excerpt || '',
+            author: {
+                name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
+                avatar: article.author.avatarUrl || '/diverse-avatars.png',
+            },
+            tags: article.tags.map((at) => at.tag.name),
+            likes: article.likes,
+            bookmarks: 0,
+            views: article.views,
+            createdAt: article.publishedAt ? article.publishedAt.toISOString().split('T')[0] : article.createdAt.toISOString().split('T')[0],
+            updatedAt: article.updatedAt.toISOString().split('T')[0],
+        }
+    } catch (error) {
+        Logger.error('Failed to fetch article:', error)
+        return null
     }
 }
 
 export async function createArticle(formData: FormData) {
     const title = formData.get('title') as string
     const content = formData.get('content') as string
-    const rawTags = formData.get('tags') as string // Json string or comma separated? Form in page.tsx needed
-
-    // Hardcoded for now for MVP - ideally get from session
-    const authorEmail = 'admin@example.com'
+    const rawTags = formData.get('tags') as string
 
     if (!title || !content) {
         return { error: 'Validate failed' }
     }
 
+    // Auth Check
+    const token = await getAuthCookie()
+    if (!token) {
+        return { error: 'Unauthorized' }
+    }
+
+    const payload = await verifyToken(token)
+    if (!payload || !payload.userId) {
+        return { error: 'Invalid token' }
+    }
+
     try {
-        const user = await prisma.user.findUnique({ where: { email: authorEmail } })
+        const user = await prisma.user.findUnique({ where: { id: payload.userId } })
         if (!user) throw new Error('User not found')
 
-        // Parse tags: assumed to be passed as JSON string or handled otherwise
-        // In post/page.tsx, we need to adjust how we send tags
         const tagsList = rawTags.split(',').map(t => t.trim()).filter(Boolean)
 
-        // Handle tags (find or create)
-        const tagConnects = []
-        for (const tagName of tagsList) {
-            // Simple logic: find existing tag or ignore/create
-            // For simplicity, let's assume we read ID or name. 
-            // If we use names, we use upsert logic or findFirst.
-            let tag = await prisma.tag.findUnique({ where: { name: tagName } })
-            if (!tag) {
-                tag = await prisma.tag.create({ data: { name: tagName } })
+        // Optimizing tag handling using connectOrCreate inside the create call
+        // Prisma supports nested writes.
+        const tagsOperation = tagsList.map(tag => ({
+            tag: {
+                connectOrCreate: {
+                    where: { name: tag },
+                    create: { name: tag }
+                }
             }
-            tagConnects.push({ tag: { connect: { id: tag.id } } })
-        }
+        }))
 
         await prisma.article.create({
             data: {
@@ -104,19 +147,36 @@ export async function createArticle(formData: FormData) {
                 content,
                 excerpt: content.substring(0, 100) + '...',
                 authorId: user.id,
-                status: 'published', // Publish immediately for MVP
+                status: 'published',
                 publishedAt: new Date(),
                 tags: {
-                    create: tagConnects
+                    create: tagsOperation
                 }
             }
         })
 
         revalidatePath('/')
     } catch (e) {
-        console.error(e)
+        Logger.error('Failed to create article:', e)
         return { error: 'Failed to create' }
     }
 
     redirect('/')
+}
+
+export async function getPopularTags(): Promise<string[]> {
+    try {
+        const tags = await prisma.tag.findMany({
+            take: 10,
+            orderBy: {
+                articles: {
+                    _count: 'desc'
+                }
+            }
+        })
+        return tags.map(tag => tag.name)
+    } catch (error) {
+        Logger.error('Failed to fetch tags:', error)
+        return []
+    }
 }

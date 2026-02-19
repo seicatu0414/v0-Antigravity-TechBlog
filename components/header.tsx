@@ -5,7 +5,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, PenSquare, User, BookMarked } from "lucide-react"
 
+import { useRouter } from "next/navigation" // Added
+import { useState } from "react" // Added
+
 export function Header() {
+  const router = useRouter()
+  const [query, setQuery] = useState("")
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && query.trim()) {
+      router.push(`/?q=${encodeURIComponent(query.trim())}`)
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -19,7 +31,13 @@ export function Header() {
 
           <div className="hidden md:flex relative w-80">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="記事を検索..." className="pl-10" />
+            <Input
+              placeholder="記事を検索..."
+              className="pl-10"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearch}
+            />
           </div>
         </div>
 

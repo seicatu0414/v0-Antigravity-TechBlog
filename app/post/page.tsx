@@ -11,41 +11,33 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { X } from "lucide-react"
 
+import ReactMarkdown from "react-markdown"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+
 function MarkdownPreview({ content }: { content: string }) {
-  // Basic markdown parsing (simplified)
-  const renderMarkdown = (text: string) => {
-    let html = text
-
-    // Code blocks
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-      return `<pre class="bg-muted p-4 rounded-lg overflow-x-auto my-4"><code class="text-sm font-mono">${code.trim()}</code></pre>`
-    })
-
-    // Inline code
-    html = html.replace(/`([^`]+)`/g, '<code class="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
-
-    // Headers
-    html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mt-6 mb-3">$1</h3>')
-    html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-8 mb-4">$1</h2>')
-    html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>')
-
-    // Bold
-    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
-
-    // Italic
-    html = html.replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>')
-
-    // Links
-    html = html.replace(/\[([^\]]+)\]$$([^)]+)$$/g, '<a href="$2" class="text-[#E2703A] hover:underline">$1</a>')
-
-    // Line breaks
-    html = html.replace(/\n\n/g, '</p><p class="mb-4">')
-    html = html.replace(/\n/g, "<br />")
-
-    return `<p class="mb-4">${html}</p>`
-  }
-
-  return <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
+  return (
+    <div className="prose prose-slate max-w-none dark:prose-invert">
+      <ReactMarkdown
+        components={{
+          code({ node, inline, className, children, ...props }: any) {
+            const match = /language-(\w+)/.exec(className || "")
+            return !inline && match ? (
+              <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div" {...props}>
+                {String(children).replace(/\n$/, "")}
+              </SyntaxHighlighter>
+            ) : (
+              <code className={className} {...props}>
+                {children}
+              </code>
+            )
+          },
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  )
 }
 
 
