@@ -7,12 +7,12 @@ import { getAuthCookie } from '@/lib/utils/cookie-auth'
 import { verifyToken } from '@/lib/auth-system'
 import { Logger } from '@/lib/logger'
 
-// UI-compatible Article type (matching mock-data.ts structure approx)
 export type UIArticle = {
     id: string
     title: string
     content: string
     excerpt: string
+    coverImageUrl?: string | null
     author: {
         name: string
         avatar: string
@@ -53,6 +53,7 @@ export async function getArticles(): Promise<UIArticle[]> {
             title: article.title,
             content: article.content,
             excerpt: article.excerpt || '',
+            coverImageUrl: article.coverImageUrl,
             author: {
                 name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
                 avatar: article.author.avatarUrl || '/diverse-avatars.png',

@@ -25,23 +25,25 @@ export default function LoginPage() {
         <CardContent>
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">メールアドレス</Label>
+              <Label htmlFor="email" className="text-sm font-medium">メールアドレス</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 placeholder="example@email.com"
                 required
+                className="h-12 rounded-xl bg-muted/40 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">パスワード</Label>
+              <Label htmlFor="password" className="text-sm font-medium">パスワード</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
                 placeholder="••••••••"
                 required
+                className="h-12 rounded-xl bg-muted/40 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
             {state?.message && (
@@ -51,16 +53,17 @@ export default function LoginPage() {
               {isPending ? "ログイン中..." : "ログイン"}
             </Button>
           </form>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-2">
-          <div className="text-sm text-muted-foreground text-center">
-            アカウントをお持ちでない方は
-            <Link href="/register" className="text-[#E2703A] hover:underline ml-1">
-              新規登録
-            </Link>
+
+          <div className="text-center pt-2">
+            <p className="text-sm text-muted-foreground">
+              アカウントをお持ちでない方は
+              <Link href="/register" className="text-[#E2703A] hover:text-[#d4612e] font-semibold ml-1 transition-colors">
+                新規登録
+              </Link>
+            </p>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
