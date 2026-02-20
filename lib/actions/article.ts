@@ -9,23 +9,7 @@ import { mkdir, writeFile, unlink } from 'fs/promises'
 import { Prisma } from '@prisma/client'
 import { Logger } from '../logger'
 
-export type UIArticle = {
-    id: string
-    title: string
-    content: string
-    excerpt: string
-    coverImageUrl?: string | null
-    author: {
-        name: string
-        avatar: string
-    }
-    tags: string[]
-    likes: number
-    bookmarks: number
-    views: number
-    createdAt: string
-    updatedAt: string
-}
+import { UIArticle } from '../types'
 
 export async function uploadImage(file: File): Promise<{ url?: string; error?: string }> {
     try {
@@ -80,10 +64,14 @@ export async function createArticle(formData: FormData) {
             return { error: 'Title and content are required' }
         }
 
+        let coverImageUrl: string | null = null
         if (coverImage && coverImage.size > 0) {
             const uploadResult = await uploadImage(coverImage)
             if (uploadResult.error) {
                 return { error: uploadResult.error }
+            }
+            if (uploadResult.url) {
+                coverImageUrl = uploadResult.url
             }
         }
 
@@ -102,6 +90,7 @@ export async function createArticle(formData: FormData) {
                 title,
                 content,
                 excerpt: content.substring(0, 100) + '...',
+                coverImageUrl,
                 authorId: payload.userId,
                 status,
                 publishedAt: status === 'published' ? new Date() : null,
@@ -141,10 +130,14 @@ export async function updateArticle(id: string, formData: FormData) {
             return { error: 'Title and content are required' }
         }
 
+        let newCoverImageUrl: string | undefined = undefined
         if (coverImage && coverImage.size > 0) {
             const uploadResult = await uploadImage(coverImage)
             if (uploadResult.error) {
                 return { error: uploadResult.error }
+            }
+            if (uploadResult.url) {
+                newCoverImageUrl = uploadResult.url
             }
         }
 
@@ -153,6 +146,10 @@ export async function updateArticle(id: string, formData: FormData) {
             content,
             excerpt: content.substring(0, 100) + '...',
             status,
+        }
+
+        if (newCoverImageUrl) {
+            dataToUpdate.coverImageUrl = newCoverImageUrl
         }
 
         if (status === 'published' && existingArticle.status === 'draft') {

@@ -1,10 +1,10 @@
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, Bookmark, Eye, Crown } from "lucide-react"
-import type { Article } from "@/lib/mock-data"
+import type { UIArticle } from "@/lib/types"
 
 interface ArticleCardProps {
-  article: Article
+  article: UIArticle
   rank?: number
 }
 
@@ -53,7 +53,7 @@ export function ArticleCard({ article, rank }: ArticleCardProps) {
         {/* Footer: Tags + Stats */}
         <div className="flex items-center justify-between pt-2">
           <div className="flex flex-wrap gap-1.5">
-            {article.tags.slice(0, 3).map((tag) => (
+            {article.tags.slice(0, 3).map((tag: string) => (
               <span
                 key={tag}
                 className="chip text-xs !px-2.5 !py-0.5 bg-primary/8 text-primary/80 hover:bg-primary/15 cursor-pointer"

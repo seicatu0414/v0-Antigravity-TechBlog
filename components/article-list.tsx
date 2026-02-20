@@ -4,32 +4,13 @@ import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
 import { Search } from "lucide-react"
 import { getArticles } from "@/app/actions"
-// We use a type that matches the shape we expect. 
-// Since we can't easily import from server action file if it has 'use server' and imports Node-only stuff in some configs, 
-// we might define interface here or assume it passes.
-// For now, let's define the prop type interface directly to avoid import issues.
-interface Article {
-    id: string
-    title: string
-    content: string
-    excerpt: string
-    author: {
-        name: string
-        avatar: string
-    }
-    tags: string[]
-    likes: number
-    bookmarks: number
-    views: number
-    createdAt: string
-    updatedAt: string
-}
+import { UIArticle } from "@/lib/types"
 
-export function ArticleList({ initialArticles, popularTags }: { initialArticles: Article[], popularTags: string[] }) {
+export function ArticleList({ initialArticles, popularTags }: { initialArticles: UIArticle[], popularTags: string[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
-    const [articles, setArticles] = useState<any[]>(initialArticles)
+    const [articles, setArticles] = useState<UIArticle[]>(initialArticles)
     const [hasMore, setHasMore] = useState(true)
     const [totalCount, setTotalCount] = useState(0)
     const [isPending, startTransition] = useTransition()
@@ -108,7 +89,7 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                     {/* Material Tabs */}
                     <div className="flex gap-1 bg-muted/50 p-1 rounded-2xl w-fit">
                         <button
-                            onClick={() => setActiveTab("latest")}
+                            onClick={() => handleTabChange("latest")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "latest"
                                 ? "bg-white text-foreground shadow-sm"
                                 : "text-muted-foreground hover:text-foreground"
@@ -117,7 +98,7 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                             🔥 新着
                         </button>
                         <button
-                            onClick={() => setActiveTab("ranking")}
+                            onClick={() => handleTabChange("ranking")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "ranking"
                                 ? "bg-white text-foreground shadow-sm"
                                 : "text-muted-foreground hover:text-foreground"

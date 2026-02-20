@@ -7,24 +7,7 @@ import { getAuthCookie } from '@/lib/utils/cookie-auth'
 import { verifyToken } from '@/lib/auth-system'
 import { Logger } from '@/lib/logger'
 
-export type UIArticle = {
-    id: string
-    title: string
-    content: string
-    excerpt: string
-    coverImageUrl?: string | null
-    author: {
-        name: string
-        avatar: string
-    }
-    tags: string[]
-    likes: number
-    bookmarks: number
-    isBookmarked?: boolean
-    views: number
-    createdAt: string
-    updatedAt: string
-}
+import { UIArticle } from '@/lib/types'
 
 export async function getArticles(options?: {
     tag?: string | null
@@ -76,6 +59,7 @@ export async function getArticles(options?: {
                 title: article.title,
                 content: article.content,
                 excerpt: article.excerpt || '',
+                coverImageUrl: article.coverImageUrl,
                 author: {
                     name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
                     avatar: article.author.avatarUrl || '/diverse-avatars.png',
@@ -130,6 +114,7 @@ export async function getArticle(id: string): Promise<UIArticle | null> {
             title: article.title,
             content: article.content,
             excerpt: article.excerpt || '',
+            coverImageUrl: article.coverImageUrl,
             author: {
                 name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
                 avatar: article.author.avatarUrl || '/diverse-avatars.png',
@@ -148,65 +133,7 @@ export async function getArticle(id: string): Promise<UIArticle | null> {
     }
 }
 
-export async function createArticle(formData: FormData) {
-    const title = formData.get('title') as string
-    const content = formData.get('content') as string
-    const rawTags = formData.get('tags') as string
-
-    if (!title || !content) {
-        return { error: 'Validate failed' }
-    }
-
-    // Auth Check
-    const token = await getAuthCookie()
-    if (!token) {
-        return { error: 'Unauthorized' }
-    }
-
-    const payload = await verifyToken(token)
-    if (!payload || !payload.userId) {
-        return { error: 'Invalid token' }
-    }
-
-    try {
-        const user = await prisma.user.findUnique({ where: { id: payload.userId } })
-        if (!user) throw new Error('User not found')
-
-        const tagsList = rawTags.split(',').map(t => t.trim()).filter(Boolean)
-
-        // Optimizing tag handling using connectOrCreate inside the create call
-        // Prisma supports nested writes.
-        const tagsOperation = tagsList.map(tag => ({
-            tag: {
-                connectOrCreate: {
-                    where: { name: tag },
-                    create: { name: tag }
-                }
-            }
-        }))
-
-        await prisma.article.create({
-            data: {
-                title,
-                content,
-                excerpt: content.substring(0, 100) + '...',
-                authorId: user.id,
-                status: 'published',
-                publishedAt: new Date(),
-                tags: {
-                    create: tagsOperation
-                }
-            }
-        })
-
-        revalidatePath('/')
-    } catch (e) {
-        Logger.error('Failed to create article:', e)
-        return { error: 'Failed to create' }
-    }
-
-    redirect('/')
-}
+// Removed duplicate createArticle function.
 
 export async function getPopularTags(): Promise<string[]> {
     try {
@@ -307,6 +234,7 @@ export async function getBookmarkedArticles(): Promise<UIArticle[]> {
             title: b.article.title,
             content: b.article.content,
             excerpt: b.article.excerpt || '',
+            coverImageUrl: b.article.coverImageUrl,
             author: {
                 name: b.article.author.nickname || `${b.article.author.firstName} ${b.article.author.lastName}`,
                 avatar: b.article.author.avatarUrl || '/diverse-avatars.png',

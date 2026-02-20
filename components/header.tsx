@@ -7,7 +7,7 @@ import { Search, PenSquare, User, BookMarked } from "lucide-react"
 import { useRouter } from "next/navigation" // Added
 import { useState } from "react" // Added
 
-export function Header() {
+export function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
   const router = useRouter()
   const [query, setQuery] = useState("")
 
@@ -48,16 +48,29 @@ export function Header() {
             </Link>
           </Button>
 
-          <Button size="sm" className="rounded-full bg-gradient-to-r from-[#E2703A] to-[#d4612e] hover:from-[#d4612e] hover:to-[#c55525] text-white shadow-md hover:shadow-lg transition-all" asChild>
-            <Link href="/post">
-              <PenSquare className="h-4 w-4 mr-2" />
-              投稿する
-            </Link>
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <Button size="sm" className="rounded-full bg-gradient-to-r from-[#E2703A] to-[#d4612e] hover:from-[#d4612e] hover:to-[#c55525] text-white shadow-md hover:shadow-lg transition-all" asChild>
+                <Link href="/post">
+                  <PenSquare className="h-4 w-4 mr-2" />
+                  投稿する
+                </Link>
+              </Button>
 
-          <Link href="/mypage" className="flex items-center justify-center h-9 w-9 rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
-            <User className="h-5 w-5" />
-          </Link>
+              <Link href="/mypage" className="flex items-center justify-center h-9 w-9 rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
+                <User className="h-5 w-5" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground" asChild>
+                <Link href="/login">ログイン</Link>
+              </Button>
+              <Button size="sm" className="rounded-full bg-[#E2703A] hover:bg-[#d4612e] text-white" asChild>
+                <Link href="/register">新規登録</Link>
+              </Button>
+            </>
+          )}
         </nav>
       </div>
     </header>

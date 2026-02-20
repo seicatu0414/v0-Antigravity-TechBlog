@@ -27,10 +27,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     }
   })
 
-  if (!article || article.status !== 'published') {
-    if (!article || (article.status !== 'published' && article.authorId !== payload?.userId)) {
-      notFound()
-    }
+  if (!article || (article.status !== 'published' && article.authorId !== payload?.userId)) {
+    notFound()
   }
 
   const isAuthor = payload?.userId === article.authorId
@@ -50,7 +48,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         <div className="card-elevated rounded-2xl overflow-hidden">
 
           {/* Cover Image */}
-          {/** Cover image feature is disabled on this branch relative to main because the schema lacks it. */}
+          {article.coverImageUrl && (
+            <div className="relative w-full aspect-video md:aspect-[21/9]">
+              <Image
+                src={article.coverImageUrl}
+                alt={article.title}
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+          )}
 
 
           <div className="p-6 md:p-10 space-y-6">
