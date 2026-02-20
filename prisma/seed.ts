@@ -1,10 +1,13 @@
 
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
     console.log(`Start seeding ...`)
+
+    const defaultPassword = await bcrypt.hash('password123', 10)
 
     // --- Users ---
     const users = [
@@ -74,7 +77,7 @@ async function main() {
         await prisma.user.upsert({
             where: { email: u.email },
             update: {},
-            create: u,
+            create: { ...u, password: defaultPassword },
         })
     }
 

@@ -5,14 +5,14 @@ This document outlines the planned features and development roadmap for the proj
 ## Planned Features (Backlog)
 ### 1. ユーザー認証・認可
 - **ログイン画面**: `/login` (Exist)
-  - [ ] メールアドレス + パスワード認証
-  - [ ] Cookie + JWT認証
-  - [ ] 新規登録ボタン → プロフィール編集画面へ遷移
+  - [x] メールアドレス + パスワード認証
+  - [x] Cookie + JWT認証
+  - [x] 新規登録ボタン → プロフィール編集画面へ遷移
 
 - **認証システム**:
-  - [ ] `lib/auth-system.ts`: JWT統一認証
-  - [ ] `lib/utils/cookie-auth.ts`: Cookie認証ヘルパー
-  - [ ] `lib/actions/auth.ts`: Server Actions
+  - [x] `lib/auth-system.ts`: JWT統一認証
+  - [x] `lib/utils/cookie-auth.ts`: Cookie認証ヘルパー
+  - [x] `lib/actions/auth.ts`: Server Actions
 
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
@@ -39,28 +39,28 @@ This document outlines the planned features and development roadmap for the proj
 
 ### 4. ブックマーク機能
 - **ブックマーク追加/削除**:
-  - [ ] 記事詳細画面からワンクリック
-  - [ ] `lib/actions/bookmarks.ts`
+  - [x] 記事詳細画面からワンクリック
+  - [x] `lib/actions/bookmarks.ts`
 
 - **ブックマーク一覧**:
-  - [ ] マイページで確認可能
+  - [x] マイページで確認可能
   - [ ] タブ切り替え (投稿記事 / ブックマーク)
 
 ### 5. プロフィール管理
 - **プロフィール画面**: `/profile/[id]` (Exist)
-  - [ ] 姓、名、ニックネーム
-  - [ ] GitHub URL
-  - [ ] 自己紹介
-  - [ ] 投稿記事一覧
-  - [ ] 編集ボタン → プロフィール編集画面へ
+  - [x] 姓、名、ニックネーム
+  - [x] GitHub URL
+  - [x] 自己紹介
+  - [x] 投稿記事一覧
+  - [x] 編集ボタン → プロフィール編集画面へ
 
 - **プロフィール編集画面**: `/mypage` (Exist)
-  - [ ] 姓、名、ニックネーム編集
-  - [ ] GitHub URL編集
-  - [ ] 自己紹介編集
-  - [ ] アバター画像アップロード
-  - [ ] メールアドレス、パスワード変更
-  - [ ] 更新ボタン → プロフィール画面へ
+  - [x] 姓、名、ニックネーム編集
+  - [x] GitHub URL編集
+  - [x] 自己紹介編集
+  - [x] アバター画像アップロード
+  - [x] メールアドレス、パスワード変更
+  - [x] 更新ボタン → プロフィール画面へ
 
 ### 6. コメント機能
 - **コメント投稿**:
@@ -135,7 +135,10 @@ This document outlines the planned features and development roadmap for the proj
 - 並び順変更
 
 ## In Progress
-- [ ] 
+- [ ] 記事投稿・管理 (Markdownエディタ等)
+- [ ] コメント機能
 
 ## Completed
-- [ ] 
+- [x] ユーザー認証・認可 (JWT, Cookie)
+- [x] ブックマーク機能 (追加/削除/一覧)
+- [x] プロフィール管理 (公開プロフィール/編集機能/アバターアップロード)

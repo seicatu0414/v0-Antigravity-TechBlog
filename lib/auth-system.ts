@@ -8,17 +8,23 @@ if (!JWT_SECRET) {
 
 const secret = new TextEncoder().encode(JWT_SECRET)
 
-export async function signToken(payload: any): Promise<string> {
-    return new SignJWT(payload)
+export interface JwtPayload {
+    userId: string
+    email: string
+    role: string
+}
+
+export async function signToken(payload: JwtPayload): Promise<string> {
+    return new SignJWT(payload as any)
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime('7d')
         .sign(secret)
 }
 
-export async function verifyToken(token: string): Promise<any> {
+export async function verifyToken(token: string): Promise<JwtPayload | null> {
     try {
         const { payload } = await jwtVerify(token, secret)
-        return payload
+        return payload as unknown as JwtPayload
     } catch (error) {
         return null
     }
