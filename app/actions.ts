@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getAuthCookie } from '@/lib/utils/cookie-auth'
 import { verifyToken } from '@/lib/auth-system'
@@ -133,7 +132,6 @@ export async function getArticle(id: string): Promise<UIArticle | null> {
     }
 }
 
-// Removed duplicate createArticle function.
 
 export async function getPopularTags(): Promise<string[]> {
     try {

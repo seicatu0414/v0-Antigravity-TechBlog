@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { getUserFromSession } from '../utils/cookie-auth'
 import path from 'path'
 import { randomUUID } from 'crypto'
-import { mkdir, writeFile, unlink } from 'fs/promises'
+import { mkdir, writeFile } from 'fs/promises'
 import { Prisma } from '@prisma/client'
 import { Logger } from '../logger'
 
