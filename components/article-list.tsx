@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
-import { Search } from "lucide-react"
+import { Search, Loader2 } from "lucide-react"
 import { getArticles } from "@/app/actions"
 import { UIArticle } from "@/lib/types"
 
@@ -142,45 +142,65 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                             </div>
                         )}
                     </div>
-                </div>
 
-                {/* Sidebar */}
-                <aside className="space-y-6">
-                    <div className="sticky top-20 space-y-6">
-                        <div className="card-elevated p-6">
-                            <h2 className="text-base font-bold mb-4 flex items-center gap-2">
-                                <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
-                                人気のタグ
-                            </h2>
-                            <div className="flex flex-wrap gap-2">
-                                {popularTags.map((tag) => (
-                                    <button
-                                        key={tag}
-                                        className={`chip text-xs cursor-pointer transition-all ${selectedTag === tag
-                                            ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
-                                            : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
-                                            }`}
-                                        onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
-                                    >
-                                        {tag}
-                                    </button>
-                                ))}
-                            </div>
+                    {/* Load More Button */}
+                    {hasMore && (
+                        <div className="pt-6 flex justify-center">
+                            <button
+                                onClick={handleLoadMore}
+                                disabled={isPending}
+                                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-primary/20 text-primary font-medium hover:bg-primary/5 hover:border-primary/40 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
+                            >
+                                {isPending ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        読み込み中...
+                                    </>
+                                ) : (
+                                    "さらに表示"
+                                )}
+                            </button>
                         </div>
+                    )}
+                </div>
+            </div>
 
-                        <div className="card-elevated p-6 surface-tint">
-                            <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                                <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
-                                TechBlogについて
-                            </h2>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                TechBlogは、エンジニアのための技術記事共有プラットフォームです。
-                                最新の技術情報やノウハウを共有し、学び合いましょう。
-                            </p>
+            {/* Sidebar */}
+            <aside className="space-y-6">
+                <div className="sticky top-20 space-y-6">
+                    <div className="card-elevated p-6">
+                        <h2 className="text-base font-bold mb-4 flex items-center gap-2">
+                            <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
+                            人気のタグ
+                        </h2>
+                        <div className="flex flex-wrap gap-2">
+                            {popularTags.map((tag) => (
+                                <button
+                                    key={tag}
+                                    className={`chip text-xs cursor-pointer transition-all ${selectedTag === tag
+                                        ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
+                                        : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
+                                        }`}
+                                    onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
                         </div>
                     </div>
-                </aside>
-            </div>
+
+                    <div className="card-elevated p-6 surface-tint">
+                        <h2 className="text-base font-bold mb-3 flex items-center gap-2">
+                            <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
+                            TechBlogについて
+                        </h2>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            TechBlogは、エンジニアのための技術記事共有プラットフォームです。
+                            最新の技術情報やノウハウを共有し、学び合いましょう。
+                        </p>
+                    </div>
+                </div>
+            </aside>
         </div>
     )
 }

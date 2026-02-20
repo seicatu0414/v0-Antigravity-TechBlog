@@ -11,6 +11,7 @@ import { UIArticle } from '@/lib/types'
 export async function getArticles(options?: {
     tag?: string | null
     search?: string | null
+    authorId?: string
     sort?: "latest" | "ranking"
     skip?: number
 }): Promise<{ articles: UIArticle[]; hasMore: boolean; totalCount: number }> {
@@ -20,6 +21,7 @@ export async function getArticles(options?: {
 
         const where: any = {
             status: 'published',
+            ...(options?.authorId ? { authorId: options.authorId } : {}),
             ...(options?.tag ? { tags: { some: { tag: { name: options.tag } } } } : {}),
             ...(options?.search ? {
                 OR: [
