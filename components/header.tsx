@@ -29,10 +29,10 @@ export function Header() {
           </Link>
 
           <div className="hidden md:flex relative w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
               placeholder="記事を検索..."
-              className="pl-10"
+              className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 border-0 text-sm placeholder:text-muted-foreground focus:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleSearch}

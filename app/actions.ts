@@ -26,48 +26,73 @@ export type UIArticle = {
     updatedAt: string
 }
 
-export async function getArticles(): Promise<UIArticle[]> {
+export async function getArticles(options?: {
+    tag?: string | null
+    search?: string | null
+    sort?: "latest" | "ranking"
+    skip?: number
+}): Promise<{ articles: UIArticle[]; hasMore: boolean; totalCount: number }> {
     try {
-        const articles = await prisma.article.findMany({
-            where: {
-                status: 'published',
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-            include: {
-                author: true,
-                tags: {
-                    include: {
-                        tag: true
+        const take = 9
+        const skip = options?.skip || 0
+
+        const where: any = {
+            status: 'published',
+            ...(options?.tag ? { tags: { some: { tag: { name: options.tag } } } } : {}),
+            ...(options?.search ? {
+                OR: [
+                    { title: { contains: options.search, mode: 'insensitive' } },
+                    { content: { contains: options.search, mode: 'insensitive' } }
+                ]
+            } : {})
+        }
+
+        const [articles, totalCount] = await Promise.all([
+            prisma.article.findMany({
+                where,
+                orderBy: options?.sort === 'ranking'
+                    ? { bookmarks: { _count: 'desc' } }
+                    : { createdAt: 'desc' },
+                skip,
+                take,
+                include: {
+                    author: true,
+                    tags: {
+                        include: {
+                            tag: true
+                        }
+                    },
+                    _count: {
+                        select: { bookmarks: true }
                     }
                 },
-                _count: {
-                    select: { bookmarks: true }
-                }
-            },
-        })
+            }),
+            prisma.article.count({ where })
+        ])
 
-        return articles.map((article) => ({
-            id: article.id,
-            title: article.title,
-            content: article.content,
-            excerpt: article.excerpt || '',
-            coverImageUrl: article.coverImageUrl,
-            author: {
-                name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
-                avatar: article.author.avatarUrl || '/diverse-avatars.png',
-            },
-            tags: article.tags.map((at) => at.tag.name),
-            likes: article.likes,
-            bookmarks: article._count.bookmarks, // Mock for now, or fetch count
-            views: article.views,
-            createdAt: article.publishedAt ? article.publishedAt.toISOString().split('T')[0] : article.createdAt.toISOString().split('T')[0],
-            updatedAt: article.updatedAt.toISOString().split('T')[0],
-        }))
+        return {
+            articles: articles.map((article) => ({
+                id: article.id,
+                title: article.title,
+                content: article.content,
+                excerpt: article.excerpt || '',
+                author: {
+                    name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
+                    avatar: article.author.avatarUrl || '/diverse-avatars.png',
+                },
+                tags: article.tags.map((at) => at.tag.name),
+                likes: article.likes,
+                bookmarks: article._count.bookmarks,
+                views: article.views,
+                createdAt: article.publishedAt ? article.publishedAt.toISOString().split('T')[0] : article.createdAt.toISOString().split('T')[0],
+                updatedAt: article.updatedAt.toISOString().split('T')[0],
+            })),
+            hasMore: skip + articles.length < totalCount,
+            totalCount
+        }
     } catch (error) {
         Logger.error('Failed to fetch articles:', error)
-        return []
+        return { articles: [], hasMore: false, totalCount: 0 }
     }
 }
 

@@ -50,18 +50,18 @@ This document outlines the planned features and development roadmap for the proj
 ### 5. プロフィール管理
 - **プロフィール画面**: `/profile/[id]` (Exist)
   - [x] 姓、名、ニックネーム
-  - [ ] GitHub URL
-  - [ ] 自己紹介
+  - [x] GitHub URL
+  - [x] 自己紹介
   - [x] 投稿記事一覧
-  - [ ] 編集ボタン → プロフィール編集画面へ
+  - [x] 編集ボタン → プロフィール編集画面へ
 
 - **プロフィール編集画面**: `/mypage` (Exist)
-  - [ ] 姓、名、ニックネーム編集
-  - [ ] GitHub URL編集
-  - [ ] 自己紹介編集
-  - [ ] アバター画像アップロード
-  - [ ] メールアドレス、パスワード変更
-  - [ ] 更新ボタン → プロフィール画面へ
+  - [x] 姓、名、ニックネーム編集
+  - [x] GitHub URL編集
+  - [x] 自己紹介編集
+  - [x] アバター画像アップロード
+  - [x] メールアドレス、パスワード変更
+  - [x] 更新ボタン → プロフィール画面へ
 
 ### 6. コメント機能
 - **コメント投稿**:
@@ -136,11 +136,13 @@ This document outlines the planned features and development roadmap for the proj
 - 並び順変更
 
 ## In Progress
-- [ ] Profile Editing
+- [ ] 記事投稿・管理 (Markdownエディタ等)
 
 ## Completed
-- [x] User Authentication (Login, Register, Logout)
-- [x] Basic Article Creation & Viewing
-- [x] Code Review Fixes (Security, Architecture, Quality)
-- [x] Header Search
-- [x] Bookmark Feature
+- [x] ユーザー認証・認可 (JWT, Cookie)
+- [x] 記事投稿・閲覧基盤
+- [x] プロフィール管理 (公開プロフィール/編集機能/アバターアップロード)
+- [x] コードレビュー修正
+- [x] ヘッダー検索
+- [x] ブックマーク機能 (追加/削除/一覧)
+- [x] コメント機能

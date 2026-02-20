@@ -5,7 +5,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { login } from "@/lib/actions/auth"
 
 const initialState = {
@@ -17,13 +16,20 @@ export default function LoginPage() {
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">ログイン</CardTitle>
-          <CardDescription className="text-center">アカウントにログインして記事を投稿しましょう</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction} className="space-y-4">
+      <div className="w-full max-w-md">
+        <div className="card-elevated p-8 rounded-2xl space-y-6">
+          {/* Logo */}
+          <div className="flex flex-col items-center space-y-4 pb-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#E2703A] to-[#EEB76B] shadow-lg">
+              <span className="text-2xl font-bold text-white">T</span>
+            </div>
+            <div className="text-center space-y-1">
+              <h1 className="text-2xl font-bold tracking-tight">ログイン</h1>
+              <p className="text-sm text-muted-foreground">アカウントにログインして記事を投稿しましょう</p>
+            </div>
+          </div>
+
+          <form action={formAction} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">メールアドレス</Label>
               <Input
@@ -47,9 +53,15 @@ export default function LoginPage() {
               />
             </div>
             {state?.message && (
-              <p className="text-sm text-red-500 text-center">{state.message}</p>
+              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
+                {state.message}
+              </div>
             )}
-            <Button type="submit" className="w-full bg-[#E2703A] hover:bg-[#E2703A]/90 text-white" disabled={isPending}>
+            <Button
+              type="submit"
+              className="w-full h-12 rounded-full bg-gradient-to-r from-[#E2703A] to-[#d4612e] hover:from-[#d4612e] hover:to-[#c55525] text-white shadow-md hover:shadow-lg font-semibold text-base transition-all"
+              disabled={isPending}
+            >
               {isPending ? "ログイン中..." : "ログイン"}
             </Button>
           </form>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
 import { Search } from "lucide-react"
+import { getArticles } from "@/app/actions"
 // We use a type that matches the shape we expect. 
 // Since we can't easily import from server action file if it has 'use server' and imports Node-only stuff in some configs, 
 // we might define interface here or assume it passes.
@@ -28,6 +29,9 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
+    const [articles, setArticles] = useState<any[]>(initialArticles)
+    const [hasMore, setHasMore] = useState(true)
+    const [totalCount, setTotalCount] = useState(0)
     const [isPending, startTransition] = useTransition()
 
     // Reload articles from server with current filters
@@ -106,8 +110,8 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                         <button
                             onClick={() => setActiveTab("latest")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "latest"
-                                    ? "bg-white text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground"
+                                ? "bg-white text-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             🔥 新着
@@ -115,8 +119,8 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                         <button
                             onClick={() => setActiveTab("ranking")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "ranking"
-                                    ? "bg-white text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground"
+                                ? "bg-white text-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             👑 ランキング
@@ -138,8 +142,8 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
 
                     {/* Articles */}
                     <div className="space-y-5">
-                        {filteredArticles.length > 0 ? (
-                            filteredArticles.map((article, index) => (
+                        {articles.length > 0 ? (
+                            articles.map((article, index) => (
                                 <div key={article.id} className="relative">
                                     {activeTab === "ranking" && (
                                         <div className={`absolute -left-10 top-6 text-xl font-black ${index === 0 ? "text-yellow-500" : index === 1 ? "text-gray-400" : index === 2 ? "text-amber-700" : "text-muted-foreground/30"
@@ -155,7 +159,7 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                                 <p className="text-muted-foreground text-lg">記事が見つかりませんでした</p>
                                 <p className="text-muted-foreground/60 text-sm mt-2">別のキーワードやタグで検索してみてください</p>
                             </div>
-                        ) : null}
+                        )}
                     </div>
                 </div>
 
@@ -172,8 +176,8 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                                     <button
                                         key={tag}
                                         className={`chip text-xs cursor-pointer transition-all ${selectedTag === tag
-                                                ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
-                                                : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
+                                            ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
+                                            : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
                                             }`}
                                         onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
                                     >
