@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, Bookmark, Share2, Pencil } from "lucide-react"
 import { MarkdownPreview } from "@/components/MarkdownPreview"
+import { CommentSection } from "@/components/CommentSection"
 import { prisma } from "@/lib/prisma"
 import { getUserFromSession } from "@/lib/utils/cookie-auth"
+import { getComments } from "@/lib/actions/comment"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -103,6 +105,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               <MarkdownPreview content={article.content} />
             </div>
           </div>
+        </div>
+
+        {/* Comment Section */}
+        <div className="card-elevated rounded-2xl p-6 md:p-10">
+          <CommentSection
+            articleId={article.id}
+            initialComments={await getComments(article.id)}
+            currentUserId={payload?.userId || null}
+          />
         </div>
       </article>
     </div>
