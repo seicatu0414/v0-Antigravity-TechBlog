@@ -1,12 +1,9 @@
 'use server'
 
 import { PrismaClient } from '@prisma/client'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 const prisma = new PrismaClient()
 
-// UI-compatible Article type (matching mock-data.ts structure approx)
 export type UIArticle = {
     id: string
     title: string

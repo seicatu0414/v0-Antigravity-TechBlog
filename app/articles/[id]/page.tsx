@@ -104,6 +104,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             </div>
           </div>
         </div>
+
+        {/* Comment Section */}
+        <div className="card-elevated rounded-2xl p-6 md:p-10">
+          <CommentSection
+            articleId={article.id}
+            initialComments={await getComments(article.id)}
+            currentUserId={payload?.userId || null}
+            isAdmin={isAdmin}
+          />
+        </div>
       </article>
     </div>
   )

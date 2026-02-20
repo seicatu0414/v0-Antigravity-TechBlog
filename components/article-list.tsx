@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
 import { Search } from "lucide-react"
 import { popularTags } from "@/lib/mock-data"
@@ -22,21 +22,69 @@ interface Article {
     updatedAt: string
 }
 
-export function ArticleList({ initialArticles }: { initialArticles: Article[] }) {
+export function ArticleList({ initialResult }: { initialResult: GetArticlesResult }) {
+    const [articles, setArticles] = useState<UIArticle[]>(initialResult.articles)
+    const [hasMore, setHasMore] = useState(initialResult.hasMore)
+    const [totalCount, setTotalCount] = useState(initialResult.totalCount)
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
+    const [isPending, startTransition] = useTransition()
 
-    const sortedArticles = activeTab === "ranking" ? [...initialArticles].sort((a, b) => b.views - a.views) : initialArticles
+    // Reload articles from server with current filters
+    const fetchArticles = (options: {
+        tag?: string | null
+        search?: string | null
+        sort?: "latest" | "ranking"
+        append?: boolean
+        skip?: number
+    }) => {
+        startTransition(async () => {
+            const result = await getArticles({
+                tag: options.tag,
+                search: options.search || null,
+                sort: options.sort ?? activeTab,
+                skip: options.skip ?? 0,
+            })
 
-    const filteredArticles = sortedArticles.filter((article) => {
-        const matchesTag = !selectedTag || article.tags.includes(selectedTag)
-        const matchesSearch =
-            !searchQuery ||
-            article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            article.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesTag && matchesSearch
-    })
+            if (options.append) {
+                setArticles((prev) => [...prev, ...result.articles])
+            } else {
+                setArticles(result.articles)
+            }
+            setHasMore(result.hasMore)
+            setTotalCount(result.totalCount)
+        })
+    }
+
+    const handleTabChange = (tab: "latest" | "ranking") => {
+        setActiveTab(tab)
+        fetchArticles({ tag: selectedTag, search: searchQuery, sort: tab })
+    }
+
+    const handleTagSelect = (tag: string | null) => {
+        setSelectedTag(tag)
+        fetchArticles({ tag, search: searchQuery })
+    }
+
+    const handleSearch = () => {
+        fetchArticles({ tag: selectedTag, search: searchQuery })
+    }
+
+    const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            handleSearch()
+        }
+    }
+
+    const handleLoadMore = () => {
+        fetchArticles({
+            tag: selectedTag,
+            search: searchQuery,
+            skip: articles.length,
+            append: true,
+        })
+    }
 
     return (
         <div className="container py-8">
@@ -108,7 +156,7 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
                                 <p className="text-muted-foreground text-lg">記事が見つかりませんでした</p>
                                 <p className="text-muted-foreground/60 text-sm mt-2">別のキーワードやタグで検索してみてください</p>
                             </div>
-                        )}
+                        ) : null}
                     </div>
                 </div>
 
@@ -128,7 +176,7 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
                                                 ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
                                                 : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
                                             }`}
-                                        onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                                        onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
                                     >
                                         {tag}
                                     </button>
