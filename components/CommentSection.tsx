@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -13,9 +14,11 @@ type CommentSectionProps = {
     articleId: string
     initialComments: CommentWithAuthor[]
     currentUserId?: string | null
+    isAdmin?: boolean
 }
 
-export function CommentSection({ articleId, initialComments, currentUserId }: CommentSectionProps) {
+export function CommentSection({ articleId, initialComments, currentUserId, isAdmin }: CommentSectionProps) {
+    const router = useRouter()
     const [comments, setComments] = useState<CommentWithAuthor[]>(initialComments)
     const [content, setContent] = useState('')
     const [error, setError] = useState<string | null>(null)
@@ -36,9 +39,7 @@ export function CommentSection({ articleId, initialComments, currentUserId }: Co
                 setError(result.error)
             } else {
                 setContent('')
-                // Optimistic: add to list immediately
-                // We don't have full author data client-side, so we reload
-                window.location.reload()
+                router.refresh()
             }
         })
     }
@@ -140,7 +141,7 @@ export function CommentSection({ articleId, initialComments, currentUserId }: Co
                                                 {formatDate(comment.createdAt)}
                                             </span>
                                         </div>
-                                        {currentUserId === comment.author.id && (
+                                        {(currentUserId === comment.author.id || isAdmin) && (
                                             <button
                                                 onClick={() => handleDelete(comment.id)}
                                                 disabled={isPending}

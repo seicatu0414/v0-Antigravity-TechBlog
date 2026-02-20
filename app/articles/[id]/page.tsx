@@ -31,6 +31,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const payload = await getUserFromSession()
   const isAuthor = payload?.userId === article.authorId
 
+  // Check admin role for comment moderation
+  let isAdmin = false
+  if (payload?.userId) {
+    const currentUser = await prisma.user.findUnique({ where: { id: payload.userId }, select: { role: true } })
+    isAdmin = currentUser?.role === 'admin'
+  }
+
   return (
     <div className="container max-w-4xl py-8">
       <article className="space-y-6">
@@ -113,6 +120,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             articleId={article.id}
             initialComments={await getComments(article.id)}
             currentUserId={payload?.userId || null}
+            isAdmin={isAdmin}
           />
         </div>
       </article>
