@@ -1,11 +1,13 @@
 import { redirect } from 'next/navigation'
 import { logout } from '@/lib/actions/auth'
+import { getBookmarkedArticles } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { prisma } from '@/lib/prisma'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Link from 'next/link'
 import { getUserFromSession } from '@/lib/utils/cookie-auth'
 import { PenSquare, User, LogOut } from 'lucide-react'
+import { ArticleCard } from '@/components/article-card'
 
 export const metadata = {
   title: 'マイページダッシュボード | TechBlog',
@@ -25,6 +27,8 @@ export default async function MyPage() {
   })
 
   if (!user) redirect('/login')
+
+  const bookmarkedArticles = await getBookmarkedArticles()
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -94,6 +98,25 @@ export default async function MyPage() {
           </div>
           <span className="font-semibold text-base group-hover:text-primary transition-colors">プロフィールを編集する</span>
         </Link>
+      </section>
+
+      {/* Bookmarks Section */}
+      <section className="space-y-6 pt-6">
+        <h2 className="text-2xl font-bold border-l-4 border-primary pl-4">ブックマークした記事</h2>
+        {bookmarkedArticles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {bookmarkedArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-muted/30 rounded-lg p-12 text-center border-dashed border-2">
+            <p className="text-muted-foreground">まだブックマークした記事はありません。</p>
+            <Button variant="link" className="mt-2" asChild>
+              <Link href="/">記事を探す</Link>
+            </Button>
+          </div>
+        )}
       </section>
     </div>
   )

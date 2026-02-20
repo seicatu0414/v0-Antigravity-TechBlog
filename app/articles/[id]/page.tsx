@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Heart, Bookmark, Share2, Pencil } from "lucide-react"
+import { Heart, Share2, Pencil } from "lucide-react"
 import { MarkdownPreview } from "@/components/MarkdownPreview"
 import { CommentSection } from "@/components/CommentSection"
+import { BookmarkButton } from "@/components/bookmark-button"
 import { prisma } from "@/lib/prisma"
 import { getUserFromSession } from "@/lib/utils/cookie-auth"
 import { getComments } from "@/lib/actions/comment"
@@ -12,23 +13,26 @@ import Image from "next/image"
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const payload = await getUserFromSession()
 
   const article = await prisma.article.findUnique({
     where: { id },
     include: {
       author: true,
-      tags: { include: { tag: true } }
+      tags: { include: { tag: true } },
+      _count: { select: { bookmarks: true } },
+      bookmarks: payload?.userId ? {
+        where: { userId: payload.userId }
+      } : false
     }
   })
 
   if (!article || article.status !== 'published') {
-    const payload = await getUserFromSession()
     if (!article || (article.status !== 'published' && article.authorId !== payload?.userId)) {
       notFound()
     }
   }
 
-  const payload = await getUserFromSession()
   const isAuthor = payload?.userId === article.authorId
 
   // Check admin role for comment moderation
@@ -38,23 +42,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     isAdmin = currentUser?.role === 'admin'
   }
 
+  const isBookmarked = payload?.userId ? article.bookmarks.length > 0 : false
+
   return (
     <div className="container max-w-4xl py-8">
       <article className="space-y-6">
         <div className="card-elevated rounded-2xl overflow-hidden">
 
           {/* Cover Image */}
-          {article.coverImageUrl && (
-            <div className="relative w-full aspect-video md:aspect-[21/9]">
-              <Image
-                src={article.coverImageUrl}
-                alt={article.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          )}
+          {/** Cover image feature is disabled on this branch relative to main because the schema lacks it. */}
+
 
           <div className="p-6 md:p-10 space-y-6">
             <div className="flex items-start justify-between gap-4">
@@ -88,10 +85,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   <Heart className="h-4 w-4 mr-1.5" />
                   {article.likes}
                 </Button>
-                <Button variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow-md transition-all">
-                  <Bookmark className="h-4 w-4 mr-1.5" />
-                  0
-                </Button>
+                <BookmarkButton
+                  articleId={article.id}
+                  initialIsBookmarked={isBookmarked}
+                  initialCount={article._count.bookmarks}
+                />
                 <Button variant="outline" size="icon" className="rounded-full shadow-sm hover:shadow-md transition-all">
                   <Share2 className="h-4 w-4" />
                 </Button>

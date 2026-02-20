@@ -17,30 +17,31 @@ This document outlines the planned features and development roadmap for the proj
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
   - [ ] Markdownエディタ (react-markdown)
-  - [ ] ライブプレビュー
+  - [x] ライブプレビュー (Preview Page)
   - [ ] タグ入力 (自由表記)
   - [ ] カバー画像アップロード
-  - [ ] 投稿ボタン → 記事一覧へ遷移
+  - [x] 投稿ボタン → 記事一覧へ遷移
 
 - **記事編集**: `/articles/[id]/edit`
   - [ ] 既存記事の編集
   - [ ] 下書き保存
 
 - **記事詳細**: `/articles/[id]`
-  - [ ] Markdown表示
+  - [x] Markdown表示
   - [ ] コメント表示
-  - [ ] ブックマークボタン
+  - [x] ブックマークボタン
 
 ### 3. 記事検索・フィルタリング
 - **記事一覧画面**: `/` (ホーム) (Exist)
-  - [ ] タグフィルター
+  - [x] タグフィルター (Backend logic exists, UI partially connected)
   - [ ] ページネーション (20件ずつ)
   - [ ] 「さらに表示」ボタン
+  - [x] ヘッダー検索
 
 ### 4. ブックマーク機能
 - **ブックマーク追加/削除**:
   - [x] 記事詳細画面からワンクリック
-  - [x] `lib/actions/bookmarks.ts`
+  - [x] `lib/actions/bookmarks.ts` (Implemented in `app/actions.ts`)
 
 - **ブックマーク一覧**:
   - [x] マイページで確認可能
@@ -88,8 +89,8 @@ This document outlines the planned features and development roadmap for the proj
 2. ✅ ニックネーム確認・編集
 3. ✅ GitHub URL確認・編集
 4. ✅ 自己紹介確認・編集
-5. ✅ 投稿記事 / ブックマーク タブ切り替え
-6. ✅ 投稿記事カード表示
+5. [ ] 投稿記事 / ブックマーク タブ切り替え
+6. [ ] 投稿記事カード表示
 7. ✅ ブックマーク記事カード表示
 
 ## 管理者機能
@@ -136,9 +137,12 @@ This document outlines the planned features and development roadmap for the proj
 
 ## In Progress
 - [ ] 記事投稿・管理 (Markdownエディタ等)
-- [ ] コメント機能
 
 ## Completed
 - [x] ユーザー認証・認可 (JWT, Cookie)
-- [x] ブックマーク機能 (追加/削除/一覧)
+- [x] 記事投稿・閲覧基盤
 - [x] プロフィール管理 (公開プロフィール/編集機能/アバターアップロード)
+- [x] コードレビュー修正
+- [x] ヘッダー検索
+- [x] ブックマーク機能 (追加/削除/一覧)
+- [x] コメント機能

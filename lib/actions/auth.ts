@@ -6,8 +6,7 @@ import { signToken } from '@/lib/auth-system'
 import { setAuthCookie, removeAuthCookie } from '@/lib/utils/cookie-auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-
-
+import { Logger } from '@/lib/logger'
 
 export async function login(prevState: any, formData: FormData) {
     const email = formData.get('email') as string
@@ -34,7 +33,7 @@ export async function login(prevState: any, formData: FormData) {
         await setAuthCookie(token)
 
     } catch (error) {
-        console.error('Login error:', error)
+        Logger.error('Login error:', error)
         return { message: 'ログイン中にエラーが発生しました。' }
     }
 
@@ -74,7 +73,7 @@ export async function register(prevState: any, formData: FormData) {
         await setAuthCookie(token)
 
     } catch (error) {
-        console.error('Register error:', error)
+        Logger.error('Register error:', error)
         return { message: '登録中にエラーが発生しました。' }
     }
 

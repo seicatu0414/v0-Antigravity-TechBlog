@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
 import { Search } from "lucide-react"
-import { popularTags } from "@/lib/mock-data"
-
+import { getArticles } from "@/app/actions"
+// We use a type that matches the shape we expect. 
+// Since we can't easily import from server action file if it has 'use server' and imports Node-only stuff in some configs, 
+// we might define interface here or assume it passes.
+// For now, let's define the prop type interface directly to avoid import issues.
 interface Article {
     id: string
     title: string
@@ -22,21 +25,69 @@ interface Article {
     updatedAt: string
 }
 
-export function ArticleList({ initialArticles }: { initialArticles: Article[] }) {
+export function ArticleList({ initialArticles, popularTags }: { initialArticles: Article[], popularTags: string[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
+    const [articles, setArticles] = useState<any[]>(initialArticles)
+    const [hasMore, setHasMore] = useState(true)
+    const [totalCount, setTotalCount] = useState(0)
+    const [isPending, startTransition] = useTransition()
 
-    const sortedArticles = activeTab === "ranking" ? [...initialArticles].sort((a, b) => b.views - a.views) : initialArticles
+    // Reload articles from server with current filters
+    const fetchArticles = (options: {
+        tag?: string | null
+        search?: string | null
+        sort?: "latest" | "ranking"
+        append?: boolean
+        skip?: number
+    }) => {
+        startTransition(async () => {
+            const result = await getArticles({
+                tag: options.tag,
+                search: options.search || null,
+                sort: options.sort ?? activeTab,
+                skip: options.skip ?? 0,
+            })
 
-    const filteredArticles = sortedArticles.filter((article) => {
-        const matchesTag = !selectedTag || article.tags.includes(selectedTag)
-        const matchesSearch =
-            !searchQuery ||
-            article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            article.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesTag && matchesSearch
-    })
+            if (options.append) {
+                setArticles((prev) => [...prev, ...result.articles])
+            } else {
+                setArticles(result.articles)
+            }
+            setHasMore(result.hasMore)
+            setTotalCount(result.totalCount)
+        })
+    }
+
+    const handleTabChange = (tab: "latest" | "ranking") => {
+        setActiveTab(tab)
+        fetchArticles({ tag: selectedTag, search: searchQuery, sort: tab })
+    }
+
+    const handleTagSelect = (tag: string | null) => {
+        setSelectedTag(tag)
+        fetchArticles({ tag, search: searchQuery })
+    }
+
+    const handleSearch = () => {
+        fetchArticles({ tag: selectedTag, search: searchQuery })
+    }
+
+    const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            handleSearch()
+        }
+    }
+
+    const handleLoadMore = () => {
+        fetchArticles({
+            tag: selectedTag,
+            search: searchQuery,
+            skip: articles.length,
+            append: true,
+        })
+    }
 
     return (
         <div className="container py-8">
@@ -59,8 +110,8 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
                         <button
                             onClick={() => setActiveTab("latest")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "latest"
-                                    ? "bg-white text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground"
+                                ? "bg-white text-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             🔥 新着
@@ -68,8 +119,8 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
                         <button
                             onClick={() => setActiveTab("ranking")}
                             className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "ranking"
-                                    ? "bg-white text-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground"
+                                ? "bg-white text-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             👑 ランキング
@@ -91,8 +142,8 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
 
                     {/* Articles */}
                     <div className="space-y-5">
-                        {filteredArticles.length > 0 ? (
-                            filteredArticles.map((article, index) => (
+                        {articles.length > 0 ? (
+                            articles.map((article, index) => (
                                 <div key={article.id} className="relative">
                                     {activeTab === "ranking" && (
                                         <div className={`absolute -left-10 top-6 text-xl font-black ${index === 0 ? "text-yellow-500" : index === 1 ? "text-gray-400" : index === 2 ? "text-amber-700" : "text-muted-foreground/30"
@@ -125,10 +176,10 @@ export function ArticleList({ initialArticles }: { initialArticles: Article[] })
                                     <button
                                         key={tag}
                                         className={`chip text-xs cursor-pointer transition-all ${selectedTag === tag
-                                                ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
-                                                : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
+                                            ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
+                                            : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
                                             }`}
-                                        onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                                        onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
                                     >
                                         {tag}
                                     </button>

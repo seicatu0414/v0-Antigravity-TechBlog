@@ -67,6 +67,7 @@ export default function RegisterPage() {
                 className="h-12 rounded-xl bg-muted/40 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
+
             {state?.message && (
               <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
                 {state.message}

@@ -80,15 +80,10 @@ export async function createArticle(formData: FormData) {
             return { error: 'Title and content are required' }
         }
 
-        let coverImageUrl: string | null = null
-
         if (coverImage && coverImage.size > 0) {
             const uploadResult = await uploadImage(coverImage)
             if (uploadResult.error) {
                 return { error: uploadResult.error }
-            }
-            if (uploadResult.url) {
-                coverImageUrl = uploadResult.url
             }
         }
 
@@ -107,7 +102,6 @@ export async function createArticle(formData: FormData) {
                 title,
                 content,
                 excerpt: content.substring(0, 100) + '...',
-                coverImageUrl,
                 authorId: payload.userId,
                 status,
                 publishedAt: status === 'published' ? new Date() : null,
@@ -147,25 +141,10 @@ export async function updateArticle(id: string, formData: FormData) {
             return { error: 'Title and content are required' }
         }
 
-        let coverImageUrl = existingArticle.coverImageUrl
-
         if (coverImage && coverImage.size > 0) {
             const uploadResult = await uploadImage(coverImage)
             if (uploadResult.error) {
                 return { error: uploadResult.error }
-            }
-            if (uploadResult.url) {
-                // Remove old cover image if it exists
-                if (coverImageUrl) {
-                    try {
-                        const oldFilename = path.basename(coverImageUrl)
-                        const oldFilepath = path.join(process.cwd(), 'public', 'uploads', 'articles', oldFilename)
-                        await unlink(oldFilepath)
-                    } catch (err) {
-                        Logger.warn('Failed to delete old article cover', err)
-                    }
-                }
-                coverImageUrl = uploadResult.url
             }
         }
 
@@ -173,7 +152,6 @@ export async function updateArticle(id: string, formData: FormData) {
             title,
             content,
             excerpt: content.substring(0, 100) + '...',
-            coverImageUrl,
             status,
         }
 
@@ -223,16 +201,6 @@ export async function deleteArticle(id: string) {
         const existingArticle = await prisma.article.findUnique({ where: { id } })
         if (!existingArticle) return { error: 'Article not found' }
         if (existingArticle.authorId !== payload.userId) return { error: 'Permission denied' }
-
-        if (existingArticle.coverImageUrl) {
-            try {
-                const oldFilename = path.basename(existingArticle.coverImageUrl)
-                const oldFilepath = path.join(process.cwd(), 'public', 'uploads', 'articles', oldFilename)
-                await unlink(oldFilepath)
-            } catch (err) {
-                Logger.warn('Failed to delete article cover', err)
-            }
-        }
 
         await prisma.article.delete({ where: { id } })
 
