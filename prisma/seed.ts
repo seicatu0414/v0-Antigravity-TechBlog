@@ -22,6 +22,7 @@ async function main() {
             githubUrl: "https://github.com/admin",
             avatarUrl: "/admin-interface.png",
             createdAt: new Date("2024-01-15"),
+            password: "$2b$10$.h88a6d12LoLyEYVhQfVK.gDgpDsjZFF6hhNv8ZEsTJNeBAdZmZnm",
         },
         {
             id: "2",
@@ -34,6 +35,7 @@ async function main() {
             githubUrl: "https://github.com/hanako",
             avatarUrl: "/diverse-woman-portrait.png",
             createdAt: new Date("2024-02-20"),
+            password: "$2b$10$.h88a6d12LoLyEYVhQfVK.gDgpDsjZFF6hhNv8ZEsTJNeBAdZmZnm",
         },
         {
             id: "3",
@@ -46,6 +48,7 @@ async function main() {
             githubUrl: "https://github.com/jiro",
             avatarUrl: "/developer-working.png",
             createdAt: new Date("2024-03-10"),
+            password: "$2b$10$.h88a6d12LoLyEYVhQfVK.gDgpDsjZFF6hhNv8ZEsTJNeBAdZmZnm",
         },
         {
             id: "4",
@@ -58,6 +61,7 @@ async function main() {
             githubUrl: "https://github.com/saburo",
             avatarUrl: "/diverse-engineers-meeting.png",
             createdAt: new Date("2024-01-25"),
+            password: "$2b$10$.h88a6d12LoLyEYVhQfVK.gDgpDsjZFF6hhNv8ZEsTJNeBAdZmZnm",
         },
         {
             id: "5",
@@ -70,6 +74,7 @@ async function main() {
             githubUrl: "https://github.com/misaki",
             avatarUrl: "/diverse-designers-brainstorming.png",
             createdAt: new Date("2024-04-05"),
+            password: "$2b$10$.h88a6d12LoLyEYVhQfVK.gDgpDsjZFF6hhNv8ZEsTJNeBAdZmZnm",
         }
     ]
 

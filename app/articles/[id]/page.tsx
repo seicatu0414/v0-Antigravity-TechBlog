@@ -1,15 +1,14 @@
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Heart, Bookmark, Share2, Pencil } from "lucide-react"
-import { MarkdownPreview } from "@/components/MarkdownPreview"
-import { prisma } from "@/lib/prisma"
-import { getUserFromSession } from "@/lib/utils/cookie-auth"
-import Link from "next/link"
-import Image from "next/image"
+import { Heart, Share2 } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import { getArticle } from "@/app/actions"
+import { BookmarkButton } from "@/components/bookmark-button"
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const article = await getArticle(id)
 
   const article = await prisma.article.findUnique({
     where: { id },
@@ -79,11 +78,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   <Heart className="h-4 w-4 mr-1.5" />
                   {article.likes}
                 </Button>
-                <Button variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow-md transition-all">
-                  <Bookmark className="h-4 w-4 mr-1.5" />
-                  0
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full shadow-sm hover:shadow-md transition-all">
+                <BookmarkButton
+                  articleId={article.id}
+                  initialIsBookmarked={article.isBookmarked}
+                  initialCount={article.bookmarks}
+                />
+                <Button variant="outline" size="icon">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </div>

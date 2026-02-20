@@ -1,5 +1,4 @@
 import { cookies } from 'next/headers'
-import { verifyToken, JwtPayload } from '../auth-system'
 
 const COOKIE_NAME = 'auth-token'
 
@@ -22,10 +21,4 @@ export async function removeAuthCookie() {
 export async function getAuthCookie(): Promise<string | undefined> {
     const cookieStore = await cookies()
     return cookieStore.get(COOKIE_NAME)?.value
-}
-
-export async function getUserFromSession(): Promise<JwtPayload | null> {
-    const token = await getAuthCookie()
-    if (!token) return null
-    return verifyToken(token)
 }

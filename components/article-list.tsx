@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react"
 import { ArticleCard } from "@/components/article-card"
 import { Search } from "lucide-react"
-import { popularTags } from "@/lib/mock-data"
-
+// We use a type that matches the shape we expect. 
+// Since we can't easily import from server action file if it has 'use server' and imports Node-only stuff in some configs, 
+// we might define interface here or assume it passes.
+// For now, let's define the prop type interface directly to avoid import issues.
 interface Article {
     id: string
     title: string
@@ -22,10 +24,7 @@ interface Article {
     updatedAt: string
 }
 
-export function ArticleList({ initialResult }: { initialResult: GetArticlesResult }) {
-    const [articles, setArticles] = useState<UIArticle[]>(initialResult.articles)
-    const [hasMore, setHasMore] = useState(initialResult.hasMore)
-    const [totalCount, setTotalCount] = useState(initialResult.totalCount)
+export function ArticleList({ initialArticles, popularTags }: { initialArticles: Article[], popularTags: string[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
