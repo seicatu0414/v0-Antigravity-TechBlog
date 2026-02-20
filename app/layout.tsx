@@ -1,11 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Noto_Sans_JP } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import StoreProvider from "./StoreProvider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const notoSansJP = Noto_Sans_JP({ subsets: ["latin"], variable: "--font-noto-sans-jp" })
 
 export const metadata: Metadata = {
   title: "TechBlog - 技術記事共有プラットフォーム",
@@ -20,10 +22,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${notoSansJP.variable} font-sans`}>
         <StoreProvider>
           <Header />
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-[calc(100vh-64px-200px)]">{children}</main>
+          <Footer />
         </StoreProvider>
       </body>
     </html>

@@ -147,9 +147,9 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
     }
 
     return (
-        <div className="space-y-6 rounded-lg border bg-card p-6">
+        <div className="card-elevated rounded-2xl p-6 md:p-8 space-y-6">
             {error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md border border-red-200">
+                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
                     {error}
                 </div>
             )}
@@ -158,7 +158,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                 <div className="flex flex-col space-y-2">
                     <Label>カバー画像</Label>
                     {previewCover ? (
-                        <div className="relative w-full aspect-video md:aspect-[21/9] rounded-lg overflow-hidden border">
+                        <div className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden shadow-sm">
                             <Image
                                 src={previewCover}
                                 alt="Cover image"
@@ -176,10 +176,10 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                         </div>
                     ) : (
                         <Label htmlFor="cover-upload" className="cursor-pointer">
-                            <div className="w-full aspect-video md:aspect-[21/9] rounded-lg border-2 border-dashed border-muted hover:border-primary/50 bg-muted/20 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
-                                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                                <span>カバー画像をアップロード</span>
-                                <span className="text-xs mt-1">推奨比率 21:9 (最大5MB)</span>
+                            <div className="w-full aspect-video md:aspect-[21/9] rounded-2xl border-2 border-dashed border-primary/20 hover:border-primary/40 bg-primary/3 hover:bg-primary/5 flex flex-col items-center justify-center text-muted-foreground hover:text-primary transition-all">
+                                <ImageIcon className="h-10 w-10 mb-3 opacity-40" />
+                                <span className="font-medium">カバー画像をアップロード</span>
+                                <span className="text-xs mt-1 opacity-60">推奨比率 21:9 (最大5MB)</span>
                             </div>
                         </Label>
                     )}
@@ -193,13 +193,13 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="title">タイトル</Label>
+                    <Label htmlFor="title" className="text-sm font-medium">タイトル</Label>
                     <Input
                         id="title"
                         placeholder="記事のタイトルを入力..."
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="text-lg font-bold"
+                        className="h-12 text-lg font-bold rounded-xl bg-muted/40 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                 </div>
 
@@ -213,9 +213,9 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                                 value={tagInput}
                                 onChange={(e) => setTagInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                className="flex-1"
+                                className="flex-1 h-10 rounded-xl bg-muted/40 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
                             />
-                            <Button type="button" variant="outline" onClick={handleAddTag} disabled={!tagInput.trim()}>
+                            <Button type="button" variant="outline" onClick={handleAddTag} disabled={!tagInput.trim()} className="rounded-xl">
                                 追加
                             </Button>
                         </div>
@@ -269,12 +269,12 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                                 placeholder="# 見出し&#10;&#10;本文をMarkdown形式で入力できます...&#10;&#10;## コード例&#10;```javascript&#10;console.log('Hello World');&#10;```"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="min-h-[400px] font-mono text-sm leading-relaxed"
+                                className="min-h-[400px] font-mono text-sm leading-relaxed rounded-xl bg-muted/30 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                         </TabsContent>
 
                         <TabsContent value="preview" className="mt-4">
-                            <div className="min-h-[400px] rounded-lg border bg-background p-6">
+                            <div className="min-h-[400px] rounded-xl bg-white elevation-1 p-6">
                                 {content ? (
                                     <>
                                         {title && <h1 className="text-4xl font-bold mb-6 text-balance">{title}</h1>}
@@ -318,7 +318,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                         </Button>
                         <Button
                             type="button"
-                            className="bg-[#E2703A] hover:bg-[#E2703A]/90 text-white"
+                            className="rounded-full bg-gradient-to-r from-[#E2703A] to-[#d4612e] hover:from-[#d4612e] hover:to-[#c55525] text-white shadow-md hover:shadow-lg font-semibold transition-all"
                             disabled={isPending}
                             onClick={(e) => handleSubmit(e, 'published')}
                         >

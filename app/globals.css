@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.975 0.002 75);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -14,21 +14,21 @@
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: oklch(0.96 0.002 75);
+  --muted-foreground: oklch(0.5 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.91 0.002 75);
+  --input: oklch(0.91 0.002 75);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -42,9 +42,9 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.175 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: oklch(0.175 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
@@ -75,15 +75,15 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Noto Sans JP", "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "Courier New", monospace;
 
-  /* Custom color palette for tech blog */
-  --color-base: #e2703a;
-  --color-main: #eeb76b;
+  /* Material Design inspired color palette */
+  --color-base: #E2703A;
+  --color-main: #EEB76B;
   --color-accent: #9c3d54;
 
-  --color-background: 0 0% 100%;
+  --color-background: 30 10% 97%;
   --color-foreground: 0 0% 10%;
 
   --color-card: 0 0% 100%;
@@ -95,11 +95,11 @@
   --color-primary: 18 73% 56%;
   --color-primary-foreground: 0 0% 100%;
 
-  --color-secondary: 38 70% 68%;
-  --color-secondary-foreground: 0 0% 10%;
+  --color-secondary: 30 20% 95%;
+  --color-secondary-foreground: 0 0% 15%;
 
-  --color-muted: 0 0% 96%;
-  --color-muted-foreground: 0 0% 45%;
+  --color-muted: 30 10% 95%;
+  --color-muted-foreground: 0 0% 40%;
 
   --color-accent: 345 46% 43%;
   --color-accent-foreground: 0 0% 100%;
@@ -107,11 +107,11 @@
   --color-destructive: 0 84% 60%;
   --color-destructive-foreground: 0 0% 100%;
 
-  --color-border: 0 0% 90%;
-  --color-input: 0 0% 90%;
+  --color-border: 30 8% 88%;
+  --color-input: 30 8% 88%;
   --color-ring: 18 73% 56%;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -126,10 +126,10 @@
   --color-background: 0 0% 10%;
   --color-foreground: 0 0% 98%;
 
-  --color-card: 0 0% 12%;
+  --color-card: 0 0% 13%;
   --color-card-foreground: 0 0% 98%;
 
-  --color-popover: 0 0% 12%;
+  --color-popover: 0 0% 13%;
   --color-popover-foreground: 0 0% 98%;
 
   --color-primary: 18 73% 56%;
@@ -162,12 +162,121 @@
   --sidebar-ring: var(--sidebar-ring);
 }
 
+/* ============================
+   Material Design Elevation
+   ============================ */
+.elevation-0 {
+  box-shadow: none;
+}
+.elevation-1 {
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.08),
+    0 1px 2px -1px rgba(0, 0, 0, 0.06);
+}
+.elevation-2 {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px -2px rgba(0, 0, 0, 0.06);
+}
+.elevation-3 {
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -4px rgba(0, 0, 0, 0.06);
+}
+.elevation-4 {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0 8px 10px -6px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================
+   Material Surface Tint
+   ============================ */
+.surface-tint {
+  background: linear-gradient(
+    to bottom,
+    hsl(18, 73%, 56%, 0.04),
+    hsl(18, 73%, 56%, 0.01)
+  );
+}
+.surface-tint-strong {
+  background: linear-gradient(
+    to bottom,
+    hsl(18, 73%, 56%, 0.08),
+    hsl(18, 73%, 56%, 0.03)
+  );
+}
+
+/* ============================
+   Base Styles
+   ============================ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Smooth transitions for interactive elements */
+  a, button, input, textarea, select {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Improved focus styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/* ============================
+   Material Card Styles
+   ============================ */
+@layer utilities {
+  .card-material {
+    @apply bg-card rounded-2xl border-0;
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.06),
+      0 1px 2px -1px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-material:hover {
+    box-shadow:
+      0 10px 20px -3px rgba(0, 0, 0, 0.1),
+      0 4px 8px -4px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+
+  .card-elevated {
+    @apply bg-card rounded-2xl border-0;
+    box-shadow:
+      0 4px 12px -1px rgba(0, 0, 0, 0.08),
+      0 2px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+    @apply bg-secondary text-secondary-foreground;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .chip:hover {
+    @apply shadow-sm;
+    filter: brightness(0.97);
+  }
+
+  .btn-material {
+    @apply rounded-xl font-medium;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  .btn-material:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+  .btn-material:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   }
 }
