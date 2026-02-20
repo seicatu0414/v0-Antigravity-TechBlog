@@ -32,6 +32,7 @@ model Article {
   title       String
   content     String
   excerpt     String?
+  coverImageUrl String?
   authorId    String
   author      User     @relation(fields: [authorId], references: [id])
   status      String   @default("draft") // "published" | "draft"

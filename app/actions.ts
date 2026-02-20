@@ -12,6 +12,7 @@ export type UIArticle = {
     title: string
     content: string
     excerpt: string
+    coverImageUrl?: string | null
     author: {
         name: string
         avatar: string
@@ -48,6 +49,7 @@ export async function getArticles(): Promise<UIArticle[]> {
             title: article.title,
             content: article.content, // content might be long, but UI seems to expect it? simple listing maybe doesn't need full content
             excerpt: article.excerpt || '',
+            coverImageUrl: article.coverImageUrl,
             author: {
                 name: article.author.nickname || `${article.author.firstName} ${article.author.lastName}`,
                 avatar: article.author.avatarUrl || '/diverse-avatars.png',
@@ -63,60 +65,4 @@ export async function getArticles(): Promise<UIArticle[]> {
         console.error('Failed to fetch articles:', error)
         return []
     }
-}
-
-export async function createArticle(formData: FormData) {
-    const title = formData.get('title') as string
-    const content = formData.get('content') as string
-    const rawTags = formData.get('tags') as string // Json string or comma separated? Form in page.tsx needed
-
-    // Hardcoded for now for MVP - ideally get from session
-    const authorEmail = 'admin@example.com'
-
-    if (!title || !content) {
-        return { error: 'Validate failed' }
-    }
-
-    try {
-        const user = await prisma.user.findUnique({ where: { email: authorEmail } })
-        if (!user) throw new Error('User not found')
-
-        // Parse tags: assumed to be passed as JSON string or handled otherwise
-        // In post/page.tsx, we need to adjust how we send tags
-        const tagsList = rawTags.split(',').map(t => t.trim()).filter(Boolean)
-
-        // Handle tags (find or create)
-        const tagConnects = []
-        for (const tagName of tagsList) {
-            // Simple logic: find existing tag or ignore/create
-            // For simplicity, let's assume we read ID or name. 
-            // If we use names, we use upsert logic or findFirst.
-            let tag = await prisma.tag.findUnique({ where: { name: tagName } })
-            if (!tag) {
-                tag = await prisma.tag.create({ data: { name: tagName } })
-            }
-            tagConnects.push({ tag: { connect: { id: tag.id } } })
-        }
-
-        await prisma.article.create({
-            data: {
-                title,
-                content,
-                excerpt: content.substring(0, 100) + '...',
-                authorId: user.id,
-                status: 'published', // Publish immediately for MVP
-                publishedAt: new Date(),
-                tags: {
-                    create: tagConnects
-                }
-            }
-        })
-
-        revalidatePath('/')
-    } catch (e) {
-        console.error(e)
-        return { error: 'Failed to create' }
-    }
-
-    redirect('/')
 }
