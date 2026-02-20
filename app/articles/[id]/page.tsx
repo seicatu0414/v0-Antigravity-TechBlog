@@ -3,10 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, Bookmark, Share2, Pencil } from "lucide-react"
 import { MarkdownPreview } from "@/components/MarkdownPreview"
-import { CommentSection } from "@/components/CommentSection"
 import { prisma } from "@/lib/prisma"
 import { getUserFromSession } from "@/lib/utils/cookie-auth"
-import { getComments } from "@/lib/actions/comment"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -30,13 +28,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
   const payload = await getUserFromSession()
   const isAuthor = payload?.userId === article.authorId
-
-  // Check admin role for comment moderation
-  let isAdmin = false
-  if (payload?.userId) {
-    const currentUser = await prisma.user.findUnique({ where: { id: payload.userId }, select: { role: true } })
-    isAdmin = currentUser?.role === 'admin'
-  }
 
   return (
     <div className="container max-w-4xl py-8">
