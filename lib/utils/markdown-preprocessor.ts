@@ -16,10 +16,12 @@ export function preprocessMarkdownContent(rawMarkdown: string): string {
     const processedLines: string[] = [];
 
     let inCodeBlock = false;
+    let inTable = false;
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmedLine = line.trim();
+        const nextLine = lines[i + 1]?.trim();
 
         // コードブロックの状態を切り替え
         if (trimmedLine.startsWith('```')) {
@@ -43,11 +45,25 @@ export function preprocessMarkdownContent(rawMarkdown: string): string {
         if (trimmedLine === '') {
             // 空行を維持
             processedLines.push('');
+            inTable = false; // テーブル状態リセット
             continue;
         }
 
+        // GFMテーブルの区切り行判定ヘルパー
+        const isTableDelimiter = nextLine ? /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(nextLine) : false;
+
+        if (
+            trimmedLine.startsWith('|') ||
+            (trimmedLine.includes('|') && isTableDelimiter) ||
+            (inTable && trimmedLine.includes('|'))
+        ) {
+            inTable = true;
+        } else {
+            inTable = false;
+        }
+
         // テーブル、リスト、引用、および見出しのロジック
-        const isTable = trimmedLine.startsWith('|');
+        const isTable = inTable;
         const isList = /^(?:[-*+]|\d+\.)\s/.test(trimmedLine);
         const isHeading = trimmedLine.startsWith('#');
         const isBlockquote = trimmedLine.startsWith('>');
@@ -61,11 +77,11 @@ export function preprocessMarkdownContent(rawMarkdown: string): string {
             // ただし、次の行が空行でなく、かつ構造的要素でない場合のみ
             processedLines.push(line);
 
-            const nextLine = lines[i + 1]?.trim();
             if (
                 nextLine !== undefined &&
                 nextLine !== '' &&
                 !nextLine.startsWith('|') &&
+                !(nextLine.includes('|') && lines[i + 2] && /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(lines[i + 2].trim())) &&
                 !/^(?:[-*+]|\d+\.)\s/.test(nextLine) &&
                 !nextLine.startsWith('#') &&
                 !nextLine.startsWith('>') &&
