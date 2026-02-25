@@ -20,9 +20,9 @@ export async function getArticles(options?: {
         const take = 9
         const skip = options?.skip || 0
 
+        // 著者IDが指定されている場合は下書きも含めて表示（マイページ用）
         const where: Prisma.ArticleWhereInput = {
-            status: 'published',
-            ...(options?.authorId ? { authorId: options.authorId } : {}),
+            ...(options?.authorId ? { authorId: options.authorId } : { status: 'published' }),
             ...(options?.tag ? { tags: { some: { tag: { name: options.tag } } } } : {}),
             ...(options?.search ? {
                 OR: [
