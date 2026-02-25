@@ -48,6 +48,27 @@ export function MarkdownPreview({ content }: { content: string }) {
                                 {children}
                             </code>
                         )
+                    },
+                    table({ children, ...props }: any) {
+                        return (
+                            <div className="w-full overflow-x-auto my-6">
+                                <table className="w-full border-collapse border border-border text-sm" {...props}>
+                                    {children}
+                                </table>
+                            </div>
+                        )
+                    },
+                    thead({ children, ...props }: any) {
+                        return <thead className="bg-muted/70" {...props}>{children}</thead>
+                    },
+                    tr({ children, ...props }: any) {
+                        return <tr className="border-b border-border m-0 p-0 hover:bg-muted/30 transition-colors" {...props}>{children}</tr>
+                    },
+                    th({ children, ...props }: any) {
+                        return <th className="border border-border px-4 py-2 font-semibold text-left [&[align=center]]:text-center [&[align=right]]:text-right text-foreground" {...props}>{children}</th>
+                    },
+                    td({ children, ...props }: any) {
+                        return <td className="border border-border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right text-foreground/90" {...props}>{children}</td>
                     }
                 }}
             >

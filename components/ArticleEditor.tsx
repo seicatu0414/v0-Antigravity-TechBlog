@@ -322,7 +322,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('`', '`')} title="インラインコード"><Code className="h-4 w-4" /></Button>
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n```\n', '\n```\n')} title="コードブロック"><FileCode className="h-4 w-4" /></Button>
                                 <div className="w-px h-4 bg-border mx-1" />
-                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n| 列1 | 列2 |\n|---|---|\n| 値1 | 値2 |\n')} title="テーブル"><Table className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n\n| 列1 | 列2 |\n|---|---|\n| 値1 | 値2 |\n\n')} title="テーブル"><Table className="h-4 w-4" /></Button>
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n$$\n', '\n$$\n')} title="数式 (KaTeX)"><Sigma className="h-4 w-4" /></Button>
 
                                 <DropdownMenu>

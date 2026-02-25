@@ -80,8 +80,7 @@ export function preprocessMarkdownContent(rawMarkdown: string): string {
             if (
                 nextLine !== undefined &&
                 nextLine !== '' &&
-                !nextLine.startsWith('|') &&
-                !(nextLine.includes('|') && lines[i + 2] && /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(lines[i + 2].trim())) &&
+                // ※テーブルの場合は、直前に空行がないとGFMで認識されないためスキップ条件から除外し強制的に空行を挟む
                 !/^(?:[-*+]|\d+\.)\s/.test(nextLine) &&
                 !nextLine.startsWith('#') &&
                 !nextLine.startsWith('>') &&
