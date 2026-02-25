@@ -25,6 +25,10 @@ export const MARKDOWN_SANITIZE_SCHEMA = {
             ['className', /^katex(?:-|$)/],
             ['class', /^katex(?:-|$)/]
         ],
+        annotation: [
+            ...(defaultSchema.attributes?.annotation || []),
+            'encoding'
+        ],
         code: [
             ...(defaultSchema.attributes?.code || []),
             ['className', /^language-[a-z0-9-]+$|^math(?:-display|-inline)?$/i],
@@ -33,7 +37,8 @@ export const MARKDOWN_SANITIZE_SCHEMA = {
         '*': [
             ...(defaultSchema.attributes?.['*'] || []),
             ['className', /^katex(?:-|$)/],
-            ['class', /^katex(?:-|$)/]
+            ['class', /^katex(?:-|$)/],
+            'style'
         ]
     }
 }

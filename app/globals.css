@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* text color safelist for markdown editor */
+/* マークダウンエディタ用テキストカラーのセーフリスト */
 @source inline('<div class="text-red-500 text-blue-500 text-green-500 text-yellow-500 text-purple-500 text-orange-500 text-sky-500 text-emerald-500 text-indigo-500 text-pink-500 bg-red-500 bg-blue-500 bg-green-500 bg-yellow-500 bg-purple-500 bg-orange-500 bg-sky-500 bg-emerald-500 bg-indigo-500 bg-pink-500 text-[#E2703A]"></div>');
 
 @custom-variant dark (&:is(.dark *));
@@ -10,47 +10,46 @@
   --font-sans: var(--font-inter), var(--font-noto-sans-jp), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-jetbrains-mono), "Courier New", monospace;
 
-  /* Base Paper & Ink colors */
+  /* ベースカラー（紙とインク） */
   --color-background: var(--color-zinc-50);
   --color-foreground: var(--color-zinc-900);
 
-  /* Surfaces & Hierarchy (No Shadows, Borders Only) */
+  /* サーフェスと階層（シャドウなし、ボーダーのみ） */
   --color-card: var(--color-background);
   --color-card-foreground: var(--color-foreground);
 
   --color-popover: var(--color-background);
   --color-popover-foreground: var(--color-foreground);
 
-  /* Primary action */
+  /* プライマリアクション */
   --color-primary: var(--color-zinc-900);
   --color-primary-foreground: var(--color-zinc-50);
 
-  /* Subdued surfaces (Inputs, code blocks, etc) */
+  /* サブデュードサーフェス（入力欄、コードブロックなど） */
   --color-secondary: var(--color-zinc-100);
   --color-secondary-foreground: var(--color-zinc-900);
 
-  /* Muted text and backgrounds */
+  /* ミュートテキストと背景 */
   --color-muted: var(--color-zinc-100);
   --color-muted-foreground: var(--color-zinc-500);
 
-  /* Hover & Active states */
+  /* ホバーとアクティブ状態 */
   --color-accent: var(--color-zinc-200);
   --color-accent-foreground: var(--color-zinc-900);
 
-  /* Status */
+  /* ステータス */
   --color-destructive: var(--color-red-600);
   --color-destructive-foreground: var(--color-zinc-50);
 
-  /* Structure and Control */
+  /* 構造とコントロール */
   --color-border: var(--color-zinc-200);
   --color-input: var(--color-zinc-100);
   --color-ring: var(--color-zinc-400);
 
-  /* Radius constraint for Editorial Tech */
+  /* エディトリアルテック向けの角丸制約 */
   --radius: 0.125rem;
 
-  /* Disable shadows globally by unsetting them in theme,
-     or setting them to none. */
+  /* シャドウをグローバルに無効化 */
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
@@ -92,7 +91,7 @@
 }
 
 /* ============================
-   Base Styles
+   ベーススタイル
    ============================ */
 @layer base {
   * {
@@ -104,7 +103,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Smooth transitions for interactive elements */
+  /* インタラクティブ要素のスムーズなトランジション */
   a,
   button,
   input,
@@ -113,14 +112,14 @@
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Improved focus styles */
+  /* 改善されたフォーカススタイル */
   :focus-visible {
     @apply outline-1 outline-offset-1 outline-ring;
   }
 }
 
 /* ============================
-   Layout Utilities
+   レイアウトユーティリティ
    ============================ */
 @layer components {
   .container {
