@@ -5,6 +5,7 @@ import { Heart, Share2, Pencil } from "lucide-react"
 import { MarkdownPreview } from "@/components/MarkdownPreview"
 import { CommentSection } from "@/components/CommentSection"
 import { BookmarkButton } from "@/components/bookmark-button"
+import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/prisma"
 import { getUserFromSession } from "@/lib/utils/cookie-auth"
 import { getComments } from "@/lib/actions/comment"
@@ -45,7 +46,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   return (
     <div className="container max-w-4xl py-8">
       <article className="space-y-6">
-        <div className="card-elevated rounded-2xl overflow-hidden">
+        <div className="rounded-sm border border-border bg-card overflow-hidden">
 
           {/* Cover Image */}
           {article.coverImageUrl && (
@@ -65,7 +66,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             <div className="flex items-start justify-between gap-4">
               <h1 className="text-3xl md:text-4xl font-bold text-balance leading-tight">{article.title}</h1>
               {isAuthor && (
-                <Button variant="outline" size="sm" asChild className="shrink-0 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Button variant="outline" size="sm" asChild className="shrink-0 flex items-center gap-1.5 font-mono uppercase tracking-wider text-xs">
                   <Link href={`/articles/${article.id}/edit`}>
                     <Pencil className="h-4 w-4" />
                     編集する
@@ -76,7 +77,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <Link href={`/profile/${article.authorId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <Avatar className="h-12 w-12 ring-2 ring-background shadow-sm">
+                <Avatar className="h-12 w-12 border border-border shadow-none rounded-sm">
                   <AvatarImage src={article.author.avatarUrl || "/diverse-avatars.png"} alt={article.author.nickname || article.author.firstName} />
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-semibold">
                     {(article.author.nickname || article.author.firstName)[0]}
@@ -84,12 +85,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 </Avatar>
                 <div>
                   <p className="font-semibold">{article.author.nickname || `${article.author.firstName} ${article.author.lastName}`}</p>
-                  <p className="text-sm text-muted-foreground">{article.publishedAt ? article.publishedAt.toLocaleDateString('ja-JP') : article.createdAt.toLocaleDateString('ja-JP')} に公開</p>
+                  <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">{article.publishedAt ? article.publishedAt.toLocaleDateString('ja-JP') : article.createdAt.toLocaleDateString('ja-JP')} に公開</p>
                 </div>
               </Link>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow-md transition-all">
+                <Button variant="outline" size="sm" className="shadow-none">
                   <Heart className="h-4 w-4 mr-1.5" />
                   {article.likes}
                 </Button>
@@ -98,7 +99,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   initialIsBookmarked={isBookmarked}
                   initialCount={article._count.bookmarks}
                 />
-                <Button variant="outline" size="icon" className="rounded-full shadow-sm hover:shadow-md transition-all">
+                <Button variant="outline" size="icon" className="shadow-none">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -107,9 +108,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             {article.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {article.tags.map((articleTag) => (
-                  <span key={articleTag.tag.id} className="chip text-xs bg-primary/8 text-primary/80">
+                  <Badge key={articleTag.tag.id} variant="outline" className="bg-zinc-100 dark:bg-zinc-900 border-border">
                     {articleTag.tag.name}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             )}
@@ -121,7 +122,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Comment Section */}
-        <div className="card-elevated rounded-2xl p-6 md:p-10">
+        <div className="rounded-sm border border-border bg-card p-6 md:p-10">
           <CommentSection
             articleId={article.id}
             initialComments={await getComments(article.id)}

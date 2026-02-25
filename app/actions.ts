@@ -1,5 +1,6 @@
 'use server'
 
+import { Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { getAuthCookie } from '@/lib/utils/cookie-auth'
@@ -19,7 +20,7 @@ export async function getArticles(options?: {
         const take = 9
         const skip = options?.skip || 0
 
-        const where: any = {
+        const where: Prisma.ArticleWhereInput = {
             status: 'published',
             ...(options?.authorId ? { authorId: options.authorId } : {}),
             ...(options?.tag ? { tags: { some: { tag: { name: options.tag } } } } : {}),
@@ -40,7 +41,15 @@ export async function getArticles(options?: {
                 skip,
                 take,
                 include: {
-                    author: true,
+                    author: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            nickname: true,
+                            avatarUrl: true
+                        }
+                    },
                     tags: {
                         include: {
                             tag: true
@@ -148,6 +157,41 @@ export async function getPopularTags(): Promise<string[]> {
         return tags.map(tag => tag.name)
     } catch (error) {
         Logger.error('Failed to fetch tags:', error)
+        return []
+    }
+}
+
+export async function getUsers(search?: string) {
+    try {
+        const users = await prisma.user.findMany({
+            where: search ? {
+                OR: [
+                    { nickname: { contains: search, mode: 'insensitive' } },
+                    { firstName: { contains: search, mode: 'insensitive' } },
+                    { lastName: { contains: search, mode: 'insensitive' } },
+                    { bio: { contains: search, mode: 'insensitive' } }
+                ]
+            } : undefined,
+            take: 5,
+            orderBy: {
+                articles: { _count: 'desc' }
+            },
+            include: {
+                _count: {
+                    select: { articles: true }
+                }
+            }
+        })
+
+        return users.map(user => ({
+            id: user.id,
+            name: user.nickname || `${user.firstName} ${user.lastName}`,
+            avatar: user.avatarUrl || '/diverse-avatars.png',
+            bio: user.bio || '',
+            articlesCount: user._count.articles
+        }))
+    } catch (error) {
+        Logger.error('Failed to fetch users:', error)
         return []
     }
 }

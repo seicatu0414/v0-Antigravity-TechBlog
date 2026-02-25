@@ -119,17 +119,17 @@ export function HeroTable({ initialImages }: { initialImages: HeroImage[] }) {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                 />
-                <Button onClick={handleUploadClick} disabled={isUploading || isPending} className="gap-2">
-                    {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                <Button onClick={handleUploadClick} disabled={isUploading || isPending} className="gap-2 rounded-md px-6">
+                    {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <UploadCloud className="w-5 h-5" />}
                     新規アップロード
                 </Button>
             </div>
 
-            <Card>
+            <Card className="rounded-md border">
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-muted pb-2 text-muted-foreground font-medium uppercase text-xs border-b">
+                            <thead className="bg-muted/10 pb-2 text-muted-foreground font-semibold uppercase text-xs border-b">
                                 <tr>
                                     <th className="px-6 py-4 w-20">順序</th>
                                     <th className="px-6 py-4">プレビュー</th>
@@ -152,17 +152,17 @@ export function HeroTable({ initialImages }: { initialImages: HeroImage[] }) {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-6 w-6"
+                                                        className="h-8 w-8 rounded-md"
                                                         disabled={index === 0 || isPending}
                                                         onClick={() => handleMove(index, 'up')}
                                                     >
                                                         <ArrowUp className="h-4 w-4" />
                                                     </Button>
-                                                    <span className="font-mono text-xs">{index + 1}</span>
+                                                    <span className="font-mono font-semibold text-muted-foreground">{index + 1}</span>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-6 w-6"
+                                                        className="h-8 w-8 rounded-md"
                                                         disabled={index === images.length - 1 || isPending}
                                                         onClick={() => handleMove(index, 'down')}
                                                     >
@@ -171,7 +171,7 @@ export function HeroTable({ initialImages }: { initialImages: HeroImage[] }) {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="w-48 h-24 rounded overflow-hidden bg-muted relative border shadow-sm">
+                                                <div className="w-48 h-24 rounded-md overflow-hidden bg-muted relative border shrink-0">
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img
                                                         src={image.url}
@@ -191,11 +191,11 @@ export function HeroTable({ initialImages }: { initialImages: HeroImage[] }) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md h-10 w-10"
                                                     disabled={isPending}
                                                     onClick={() => handleDelete(image.id)}
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <Trash2 className="w-5 h-5" />
                                                 </Button>
                                             </td>
                                         </tr>

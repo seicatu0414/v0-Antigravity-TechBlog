@@ -77,11 +77,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
             <div className="max-w-4xl mx-auto space-y-12">
 
                 {/* Profile Header */}
-                <section className="bg-card rounded-xl p-8 shadow-sm border space-y-6">
+                <section className="rounded-sm border border-border bg-card p-8 shadow-none space-y-6">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                        <Avatar className="h-32 w-32 border-4 border-background shadow-md">
+                        <Avatar className="h-32 w-32 border border-border shadow-none rounded-sm">
                             <AvatarImage src={user.avatarUrl || undefined} alt={user.nickname || user.firstName} className="object-cover" />
-                            <AvatarFallback className="text-4xl text-primary font-bold bg-primary/10">
+                            <AvatarFallback className="text-4xl font-mono text-primary font-bold bg-muted">
                                 {user.nickname?.[0] || user.firstName[0]}
                             </AvatarFallback>
                         </Avatar>
@@ -93,17 +93,17 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                                     <p className="text-muted-foreground mt-1 text-sm">@{user.id.slice(-6)}</p>
                                 </div>
                                 {isOwnProfile && (
-                                    <Button asChild variant="outline">
+                                    <Button asChild variant="outline" size="sm" className="shadow-none font-mono uppercase tracking-wider text-xs">
                                         <Link href="/mypage/profile">プロフィールを編集</Link>
                                     </Button>
                                 )}
                             </div>
 
-                            <div className="bg-muted/30 p-4 rounded-lg text-sm leading-relaxed border border-muted">
+                            <div className="bg-zinc-100 dark:bg-zinc-900 p-4 rounded-sm border border-border text-sm leading-relaxed">
                                 {user.bio ? (
-                                    <p className="whitespace-pre-wrap">{user.bio}</p>
+                                    <p className="whitespace-pre-wrap font-sans">{user.bio}</p>
                                 ) : (
-                                    <p className="text-muted-foreground italic">自己紹介はまだありません。</p>
+                                    <p className="text-muted-foreground font-mono uppercase tracking-wider text-xs">自己紹介はまだありません。</p>
                                 )}
                             </div>
 
@@ -126,7 +126,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
 
                 {/* User's Articles */}
                 <section className="space-y-6">
-                    <h2 className="text-2xl font-bold border-l-4 border-primary pl-4">投稿記事 <span className="text-muted-foreground font-normal text-lg">({publishedArticles.length})</span></h2>
+                    <h2 className="text-xl font-bold border-l-4 border-primary pl-4">投稿記事 <span className="text-muted-foreground font-mono text-base ml-2">({publishedArticles.length})</span></h2>
 
                     {publishedArticles.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,8 +135,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-muted/30 rounded-lg p-12 text-center border-dashed border-2">
-                            <p className="text-muted-foreground">まだ公開された記事はありません。</p>
+                        <div className="rounded-sm border border-border bg-zinc-100 dark:bg-zinc-900 p-12 text-center shadow-none">
+                            <p className="text-muted-foreground font-mono uppercase tracking-wider text-sm">まだ公開された記事はありません。</p>
                         </div>
                     )}
                 </section>

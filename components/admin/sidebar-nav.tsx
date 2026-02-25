@@ -15,7 +15,7 @@ export function SidebarNav() {
     ]
 
     return (
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
             {navItems.map((item) => {
                 const isActive = item.exact
                     ? pathname === item.href
@@ -25,14 +25,14 @@ export function SidebarNav() {
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group ${isActive
-                                ? 'bg-primary text-primary-foreground'
-                                : 'hover:bg-muted text-foreground/80 hover:text-foreground'
+                        className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors group border-l-4 ${isActive
+                            ? 'bg-primary/5 border-primary text-primary'
+                            : 'border-transparent hover:bg-muted/50 text-foreground/80 hover:text-foreground'
                             }`}
                     >
                         <item.icon className={`h-4 w-4 transition-colors ${isActive
-                                ? 'text-primary-foreground'
-                                : 'text-muted-foreground group-hover:text-primary'
+                            ? 'text-primary'
+                            : 'text-muted-foreground group-hover:text-foreground'
                             }`} />
                         {item.label}
                     </Link>

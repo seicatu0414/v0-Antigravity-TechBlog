@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { getUserFromSession } from '@/lib/utils/cookie-auth'
 import { PenSquare, User, LogOut } from 'lucide-react'
 import { MypageTabs } from '@/components/mypage-tabs'
+import { Badge } from '@/components/ui/badge'
 
 export const metadata = {
   title: 'マイページダッシュボード | TechBlog',
@@ -35,13 +36,13 @@ export default async function MyPage() {
       <h1 className="text-2xl font-bold tracking-tight">ダッシュボード</h1>
 
       {/* Profile Summary Card */}
-      <section className="card-elevated rounded-2xl overflow-hidden">
-        {/* Gradient banner */}
-        <div className="h-24 bg-gradient-to-r from-[#E2703A] to-[#EEB76B] relative">
+      <section className="rounded-sm border border-border bg-card overflow-hidden shadow-none">
+        {/* Flat banner */}
+        <div className="h-24 bg-zinc-100 dark:bg-zinc-900 border-b border-border relative">
           <div className="absolute -bottom-12 left-8">
-            <Avatar className="h-24 w-24 ring-4 ring-white shadow-lg">
+            <Avatar className="h-24 w-24 border border-border shadow-none rounded-sm">
               <AvatarImage src={user.avatarUrl || undefined} alt={user.nickname || user.firstName} className="object-cover" />
-              <AvatarFallback className="text-3xl text-primary font-bold bg-gradient-to-br from-primary/20 to-primary/5">
+              <AvatarFallback className="text-3xl font-mono font-bold bg-muted">
                 {user.nickname?.[0] || user.firstName[0]}
               </AvatarFallback>
             </Avatar>
@@ -51,31 +52,31 @@ export default async function MyPage() {
         <div className="pt-16 pb-8 px-8 space-y-4">
           <div>
             <h2 className="text-xl font-bold">{user.nickname || `${user.firstName} ${user.lastName}`}</h2>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <p className="text-sm font-mono text-muted-foreground mt-1">{user.email}</p>
             <div className="mt-2">
-              <span className="chip text-xs bg-primary/10 text-primary">
+              <Badge variant="outline" className="bg-zinc-100 dark:bg-zinc-900 border-border">
                 {user.role === 'admin' ? '管理者' : '一般ユーザー'}
-              </span>
+              </Badge>
             </div>
           </div>
 
           <div className="flex gap-6 pt-2">
             <div className="text-center">
-              <span className="block text-2xl font-bold text-foreground">{user._count.articles}</span>
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">投稿記事</span>
+              <span className="block text-2xl font-mono font-bold text-foreground">{user._count.articles}</span>
+              <span className="text-[10px] sm:text-xs text-muted-foreground font-mono font-medium uppercase tracking-wider">投稿記事</span>
             </div>
             <div className="text-center">
-              <span className="block text-2xl font-bold text-foreground">{user._count.bookmarks}</span>
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">ブックマーク</span>
+              <span className="block text-2xl font-mono font-bold text-foreground">{user._count.bookmarks}</span>
+              <span className="text-[10px] sm:text-xs text-muted-foreground font-mono font-medium uppercase tracking-wider">ブックマーク</span>
             </div>
           </div>
 
           <div className="pt-4 flex flex-wrap gap-3">
-            <Button asChild className="rounded-full bg-foreground hover:bg-foreground/90 text-background shadow-md">
+            <Button size="sm" asChild className="shadow-none font-mono uppercase tracking-wider text-xs">
               <Link href={`/profile/${user.id}`}>公開プロフィールを見る</Link>
             </Button>
             <form action={logout}>
-              <Button type="submit" variant="outline" className="rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive">
+              <Button size="sm" type="submit" variant="outline" className="shadow-none font-mono uppercase tracking-wider text-xs border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="h-4 w-4 mr-2" />
                 ログアウト
               </Button>
@@ -86,17 +87,17 @@ export default async function MyPage() {
 
       {/* Quick Actions */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Link href="/post" className="card-material p-8 flex flex-col items-center justify-center text-center group cursor-pointer h-36">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-            <PenSquare className="h-6 w-6 text-primary" />
+        <Link href="/post" className="rounded-sm border border-border bg-card p-6 flex flex-col items-center justify-center text-center group cursor-pointer h-36 hover:bg-muted/50 transition-colors shadow-none">
+          <div className="h-12 w-12 rounded-sm border border-border bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mb-3">
+            <PenSquare className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
           </div>
-          <span className="font-semibold text-base group-hover:text-primary transition-colors">新しい記事を投稿する</span>
+          <span className="text-sm font-mono uppercase tracking-wider font-medium text-muted-foreground group-hover:text-foreground transition-colors">新しい記事を投稿</span>
         </Link>
-        <Link href="/mypage/profile" className="card-material p-8 flex flex-col items-center justify-center text-center group cursor-pointer h-36">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-            <User className="h-6 w-6 text-primary" />
+        <Link href="/mypage/profile" className="rounded-sm border border-border bg-card p-6 flex flex-col items-center justify-center text-center group cursor-pointer h-36 hover:bg-muted/50 transition-colors shadow-none">
+          <div className="h-12 w-12 rounded-sm border border-border bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mb-3">
+            <User className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
           </div>
-          <span className="font-semibold text-base group-hover:text-primary transition-colors">プロフィールを編集する</span>
+          <span className="text-sm font-mono uppercase tracking-wider font-medium text-muted-foreground group-hover:text-foreground transition-colors">プロフィールを編集</span>
         </Link>
       </section>
 

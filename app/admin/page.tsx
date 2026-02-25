@@ -18,63 +18,63 @@ export default async function AdminDashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card className="rounded-md border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">総ユーザー数</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">総ユーザー数</CardTitle>
+                        <Users className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalUsers}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <div className="text-4xl font-extrabold tracking-tight">{stats.totalUsers}</div>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">
                             うち管理者: {stats.adminUsers}人
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-md border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">総記事数</CardTitle>
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">総記事数</CardTitle>
+                        <FileText className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalArticles}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <div className="text-4xl font-extrabold tracking-tight">{stats.totalArticles}</div>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">
                             公開済み: {stats.publishedArticles}件 / 下書き: {stats.totalArticles - stats.publishedArticles}件
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-md border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">タグ数</CardTitle>
-                        <Tags className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">タグ数</CardTitle>
+                        <Tags className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalTags}</div>
+                        <div className="text-4xl font-extrabold tracking-tight">{stats.totalTags}</div>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-md border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">コメント数</CardTitle>
-                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">コメント数</CardTitle>
+                        <MessageSquare className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalComments}</div>
+                        <div className="text-4xl font-extrabold tracking-tight">{stats.totalComments}</div>
                     </CardContent>
                 </Card>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-                <Card className="col-span-1 border-t-4 border-t-primary">
-                    <CardHeader>
-                        <CardTitle className="text-lg">最近の登録ユーザー</CardTitle>
+                <Card className="col-span-1 rounded-md border">
+                    <CardHeader className="border-b bg-muted/30">
+                        <CardTitle className="text-base">最近の登録ユーザー</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="space-y-6">
+                    <CardContent className="pt-6">
+                        <div className="space-y-4">
                             {recentUsers.map(user => (
-                                <div key={user.id} className="flex items-center">
-                                    <Avatar className="h-9 w-9">
+                                <div key={user.id} className="flex items-center p-3 rounded-md hover:bg-muted/30 transition-colors border">
+                                    <Avatar className="h-10 w-10 border rounded-md">
                                         <AvatarImage src={user.avatarUrl || undefined} alt="Avatar" />
                                         <AvatarFallback>{user.nickname?.[0] || user.firstName[0]}</AvatarFallback>
                                     </Avatar>

@@ -18,7 +18,7 @@ export default async function EditProfilePage() {
     if (!user) redirect('/login')
 
     return (
-        <div className="bg-card rounded-xl p-6 shadow-sm border">
+        <div className="rounded-sm border border-border bg-card p-6 shadow-none">
             <div className="mb-6">
                 <h1 className="text-2xl font-bold">プロフィール編集</h1>
                 <p className="text-muted-foreground text-sm mt-1">

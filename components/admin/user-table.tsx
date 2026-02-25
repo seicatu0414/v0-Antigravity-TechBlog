@@ -65,11 +65,11 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
     }
 
     return (
-        <Card>
+        <Card className="rounded-md border">
             <CardContent className="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-muted pb-2 text-muted-foreground font-medium uppercase text-xs border-b">
+                        <thead className="bg-muted/10 pb-2 text-muted-foreground font-semibold uppercase text-xs border-b">
                             <tr>
                                 <th className="px-6 py-4">ユーザー</th>
                                 <th className="px-6 py-4">権限</th>
@@ -95,9 +95,9 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${user.role === 'admin'
-                                            ? 'bg-blue-50 text-blue-700 ring-blue-700/10 dark:bg-blue-900/40 dark:text-blue-400 dark:ring-blue-800/50'
-                                            : 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-800/40'
+                                        <span className={`inline-flex items-center rounded-sm px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${user.role === 'admin'
+                                            ? 'bg-blue-50 text-blue-700 ring-blue-700/20 dark:bg-blue-900/40 dark:text-blue-400 dark:ring-blue-800/50'
+                                            : 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-800/40' // Using thin labels
                                             }`}>
                                             {user.role === 'admin' ? '管理者' : '一般ユーザー'}
                                         </span>
@@ -111,7 +111,7 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
                                     <td className="px-6 py-4 text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isPending}>
+                                                <Button variant="ghost" className="h-8 w-8 p-0 rounded-md" disabled={isPending}>
                                                     <span className="sr-only">メニューを開く</span>
                                                     <MoreVertical className="h-4 w-4" />
                                                 </Button>

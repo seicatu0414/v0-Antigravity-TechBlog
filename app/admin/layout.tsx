@@ -28,11 +28,11 @@ export default async function AdminLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-muted/20">
+        <div className="flex min-h-screen bg-background">
             {/* Admin Sidebar */}
-            <aside className="w-64 border-r bg-card flex flex-col fixed inset-y-0 left-0 z-50 pt-16 lg:pt-0">
-                <div className="p-6 border-b flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+            <aside className="w-64 border-r border-border bg-background flex flex-col fixed inset-y-0 left-0 z-50 pt-16 lg:pt-0">
+                <div className="p-6 border-b border-border flex items-center gap-3">
+                    <div className="text-primary">
                         <LayoutDashboard className="h-5 w-5" />
                     </div>
                     <span className="font-bold text-lg tracking-tight">Admin Console</span>

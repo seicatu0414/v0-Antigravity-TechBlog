@@ -99,11 +99,11 @@ export function TagTable({ initialTags }: { initialTags: TagData[] }) {
                 </Button>
             </div>
 
-            <Card>
+            <Card className="rounded-md border">
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-muted pb-2 text-muted-foreground font-medium uppercase text-xs border-b">
+                            <thead className="bg-muted/10 pb-2 text-muted-foreground font-semibold uppercase text-xs border-b">
                                 <tr>
                                     <th className="px-6 py-4">タグ名</th>
                                     <th className="px-6 py-4">プレビュー</th>
@@ -119,21 +119,22 @@ export function TagTable({ initialTags }: { initialTags: TagData[] }) {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span
-                                                className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm"
+                                                className="inline-block px-3 py-1 rounded-sm text-xs font-semibold text-white ring-1 ring-inset ring-black/10"
                                                 style={{ backgroundColor: tag.color }}
                                             >
                                                 {tag.name}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
+                                        <td className="px-6 py-4 text-muted-foreground font-medium">
                                             {tag._count.articles} 件
                                         </td>
                                         <td className="px-6 py-4 text-right space-x-2">
-                                            <Button variant="outline" size="sm" onClick={() => openEditDialog(tag)} disabled={isPending}>
-                                                <Edit className="w-4 h-4 mr-1" /> 編集
+                                            <Button variant="outline" size="sm" className="rounded-md h-8 text-xs font-medium" onClick={() => openEditDialog(tag)} disabled={isPending}>
+                                                <Edit className="w-3.5 h-3.5 mr-1" /> 編集
                                             </Button>
-                                            <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(tag.id, tag.name)} disabled={isPending}>
-                                                <Trash2 className="w-4 h-4 mr-1" /> 削除
+                                            <Button variant="outline" size="icon" className="rounded-md h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(tag.id, tag.name)} disabled={isPending}>
+                                                <span className="sr-only">削除</span>
+                                                <Trash2 className="w-4 h-4" />
                                             </Button>
                                         </td>
                                     </tr>

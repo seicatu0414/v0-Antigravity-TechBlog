@@ -1,10 +1,26 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { ArticleCard } from "@/components/article-card"
-import { Search, Loader2 } from "lucide-react"
-import { getArticles } from "@/app/actions"
+import { useState, useTransition, useEffect } from "react"
+
+import { ArticleCard, RankingArticleCard } from "@/components/article-card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Loader2, X, TrendingUp, Newspaper } from "lucide-react"
+import { getArticles, getUsers } from "@/app/actions"
 import { UIArticle } from "@/lib/types"
+
+import { HeroBanner } from "./article-list/hero-banner"
+import { SearchFilterBar } from "./article-list/search-filter-bar"
+import { TagSearchModal } from "./article-list/tag-search-modal"
+import { Sidebar } from "./article-list/sidebar"
+
+type UserProfile = {
+    id: string
+    name: string
+    avatar: string
+    bio: string
+    articlesCount: number
+}
 
 export function ArticleList({ initialArticles, popularTags }: { initialArticles: UIArticle[], popularTags: string[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
@@ -12,8 +28,26 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
     const [searchQuery, setSearchQuery] = useState("")
     const [articles, setArticles] = useState<UIArticle[]>(initialArticles)
     const [hasMore, setHasMore] = useState(true)
-    const [totalCount, setTotalCount] = useState(0)
     const [isPending, startTransition] = useTransition()
+
+    // Tag Modal States
+    const [isTagModalOpen, setIsTagModalOpen] = useState(false)
+    const [tagSearch, setTagSearch] = useState("")
+
+    // User Search States
+    const [userSearch, setUserSearch] = useState("")
+    const [debouncedUserSearch, setDebouncedUserSearch] = useState("")
+    const [users, setUsers] = useState<UserProfile[]>([])
+    const [isUsersPending, startUsersTransition] = useTransition()
+
+    // Debounce logic
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedUserSearch(userSearch)
+        }, 300)
+
+        return () => clearTimeout(timer)
+    }, [userSearch])
 
     // Reload articles from server with current filters
     const fetchArticles = (options: {
@@ -37,7 +71,6 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
                 setArticles(result.articles)
             }
             setHasMore(result.hasMore)
-            setTotalCount(result.totalCount)
         })
     }
 
@@ -47,8 +80,11 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
     }
 
     const handleTagSelect = (tag: string | null) => {
-        setSelectedTag(tag)
-        fetchArticles({ tag, search: searchQuery })
+        const newTag = selectedTag === tag ? null : tag
+        setSelectedTag(newTag)
+        setIsTagModalOpen(false)
+        setTagSearch("")
+        fetchArticles({ tag: newTag, search: searchQuery })
     }
 
     const handleSearch = () => {
@@ -61,6 +97,31 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
         }
     }
 
+    const handleUserSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUserSearch(e.target.value)
+    }
+
+    // Effect to fetch users based on debounced search
+    useEffect(() => {
+        let active = true
+
+        if (debouncedUserSearch.trim() === '') {
+            setUsers([])
+            return
+        }
+
+        startUsersTransition(async () => {
+            const results = await getUsers(debouncedUserSearch)
+            if (active) {
+                setUsers(results)
+            }
+        })
+
+        return () => {
+            active = false
+        }
+    }, [debouncedUserSearch])
+
     const handleLoadMore = () => {
         fetchArticles({
             tag: selectedTag,
@@ -70,137 +131,163 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
         })
     }
 
+    const filteredTags = popularTags.filter((t) =>
+        t.toLowerCase().includes(tagSearch.toLowerCase())
+    )
+
     return (
-        <div className="container py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Main Content */}
-                <div className="lg:col-span-3 space-y-6">
-                    {/* Mobile search */}
-                    <div className="relative w-full md:hidden">
-                        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <input
-                            placeholder="記事を検索..."
-                            className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 border-0 text-sm placeholder:text-muted-foreground focus:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
+        <div>
+            <HeroBanner />
 
-                    {/* Material Tabs */}
-                    <div className="flex gap-1 bg-muted/50 p-1 rounded-2xl w-fit">
-                        <button
-                            onClick={() => handleTabChange("latest")}
-                            className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "latest"
-                                ? "bg-white text-foreground shadow-sm"
-                                : "text-muted-foreground hover:text-foreground"
-                                }`}
-                        >
-                            🔥 新着
-                        </button>
-                        <button
-                            onClick={() => handleTabChange("ranking")}
-                            className={`px-5 py-2 text-sm font-semibold rounded-xl transition-all ${activeTab === "ranking"
-                                ? "bg-white text-foreground shadow-sm"
-                                : "text-muted-foreground hover:text-foreground"
-                                }`}
-                        >
-                            👑 ランキング
-                        </button>
-                    </div>
+            <SearchFilterBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                handleSearchKeyDown={handleSearchKeyDown}
+                fetchArticles={fetchArticles}
+                selectedTag={selectedTag}
+                setIsTagModalOpen={setIsTagModalOpen}
+            />
 
-                    {/* Active Tag Filter */}
-                    {selectedTag && (
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">フィルター:</span>
-                            <button
-                                className="chip bg-primary/10 text-primary text-sm hover:bg-primary/20"
-                                onClick={() => setSelectedTag(null)}
+            <TagSearchModal
+                isTagModalOpen={isTagModalOpen}
+                setIsTagModalOpen={setIsTagModalOpen}
+                tagSearch={tagSearch}
+                setTagSearch={setTagSearch}
+                selectedTag={selectedTag}
+                handleTagSelect={handleTagSelect}
+                filteredTags={filteredTags}
+                popularTagsLength={popularTags.length}
+            />
+
+            {/* Main Content */}
+            <div className="mx-auto max-w-7xl px-4 py-6">
+                {/* Active filter indicator */}
+                {(selectedTag || searchQuery) && (
+                    <div className="mb-6 flex items-center gap-3">
+                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground">{'Active Filters:'}</span>
+                        {selectedTag && (
+                            <Badge
+                                variant="secondary"
+                                className="cursor-pointer rounded-sm border border-border bg-muted px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-foreground hover:bg-muted/80 shadow-none"
+                                onClick={() => handleTagSelect(null)}
                             >
-                                {selectedTag} ✕
-                            </button>
-                        </div>
-                    )}
+                                {selectedTag} <X className="ml-1.5 h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                        {searchQuery && (
+                            <Badge
+                                variant="secondary"
+                                className="cursor-pointer rounded-sm border border-border bg-muted px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-foreground hover:bg-muted/80 shadow-none"
+                                onClick={() => {
+                                    setSearchQuery("")
+                                    fetchArticles({ tag: selectedTag, search: "" })
+                                }}
+                            >
+                                QUERY: {`${searchQuery}`} <X className="ml-1.5 h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                    </div>
+                )}
 
-                    {/* Articles */}
-                    <div className="space-y-5">
-                        {articles.length > 0 ? (
-                            articles.map((article, index) => (
-                                <div key={article.id} className="relative">
-                                    {activeTab === "ranking" && (
-                                        <div className={`absolute -left-10 top-6 text-xl font-black ${index === 0 ? "text-yellow-500" : index === 1 ? "text-gray-400" : index === 2 ? "text-amber-700" : "text-muted-foreground/30"
-                                            }`}>
-                                            {index + 1}
-                                        </div>
-                                    )}
-                                    <ArticleCard article={article} rank={activeTab === "ranking" ? index + 1 : undefined} />
-                                </div>
-                            ))
+                {/* Tab Navigation */}
+                <div className="mb-8 flex items-center border-b-[2px] border-border">
+                    <button
+                        onClick={() => handleTabChange("latest")}
+                        className={`relative flex items-center gap-2 px-5 py-3 text-[13px] font-mono font-bold uppercase tracking-wider transition-colors ${activeTab === "latest"
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                            }`}
+                    >
+                        <Newspaper className="h-4 w-4" />
+                        {'LATEST'}
+                        {activeTab === "latest" && (
+                            <span className="absolute bottom-[-2px] left-0 right-0 h-[2px] bg-primary" />
+                        )}
+                    </button>
+                    <button
+                        onClick={() => handleTabChange("ranking")}
+                        className={`relative flex items-center gap-2 px-5 py-3 text-[13px] font-mono font-bold uppercase tracking-wider transition-colors ${activeTab === "ranking"
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                            }`}
+                    >
+                        <TrendingUp className="h-4 w-4" />
+                        {'RANKING'}
+                        {activeTab === "ranking" && (
+                            <span className="absolute bottom-[-2px] left-0 right-0 h-[2px] bg-primary" />
+                        )}
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+                    {/* Main content */}
+                    <div className="lg:col-span-3 pb-16">
+                        {activeTab === "latest" ? (
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                                {articles.length > 0 ? (
+                                    articles.map((article) => (
+                                        <ArticleCard key={article.id} article={article} />
+                                    ))
+                                ) : (
+                                    <div className="col-span-full rounded-sm border border-dashed border-border py-16 text-center">
+                                        <p className="text-[12px] font-mono uppercase tracking-wider text-muted-foreground">{'No articles found'}</p>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
-                            <div className="card-elevated p-16 text-center">
-                                <p className="text-muted-foreground text-lg">記事が見つかりませんでした</p>
-                                <p className="text-muted-foreground/60 text-sm mt-2">別のキーワードやタグで検索してみてください</p>
+                            <div className="flex flex-col gap-4">
+                                {articles.length > 0 ? (
+                                    articles.map((article, index) => (
+                                        <RankingArticleCard
+                                            key={article.id}
+                                            article={article}
+                                            rank={index + 1}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="rounded-sm border border-dashed border-border py-16 text-center">
+                                        <p className="text-[12px] font-mono uppercase tracking-wider text-muted-foreground">{'No articles found'}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Load More Button */}
+                        {hasMore && (
+                            <div className="pt-12 flex justify-center">
+                                <Button
+                                    onClick={handleLoadMore}
+                                    disabled={isPending}
+                                    variant="outline"
+                                    className="rounded-sm border border-border px-8 py-2 text-[12px] font-mono font-bold uppercase tracking-wider text-foreground shadow-none transition-colors hover:border-primary hover:text-primary hover:bg-transparent"
+                                >
+                                    {isPending ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            LOADING...
+                                        </>
+                                    ) : (
+                                        "LOAD MORE"
+                                    )}
+                                </Button>
                             </div>
                         )}
                     </div>
 
-                    {/* Load More Button */}
-                    {hasMore && (
-                        <div className="pt-6 flex justify-center">
-                            <button
-                                onClick={handleLoadMore}
-                                disabled={isPending}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-primary/20 text-primary font-medium hover:bg-primary/5 hover:border-primary/40 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
-                            >
-                                {isPending ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        読み込み中...
-                                    </>
-                                ) : (
-                                    "さらに表示"
-                                )}
-                            </button>
-                        </div>
-                    )}
+                    <Sidebar
+                        userSearch={userSearch}
+                        handleUserSearch={handleUserSearch}
+                        setUserSearch={setUserSearch}
+                        setUsers={setUsers}
+                        isUsersPending={isUsersPending}
+                        users={users}
+                        popularTags={popularTags}
+                        selectedTag={selectedTag}
+                        handleTagSelect={handleTagSelect}
+                    />
                 </div>
             </div>
-
-            {/* Sidebar */}
-            <aside className="space-y-6">
-                <div className="sticky top-20 space-y-6">
-                    <div className="card-elevated p-6">
-                        <h2 className="text-base font-bold mb-4 flex items-center gap-2">
-                            <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
-                            人気のタグ
-                        </h2>
-                        <div className="flex flex-wrap gap-2">
-                            {popularTags.map((tag) => (
-                                <button
-                                    key={tag}
-                                    className={`chip text-xs cursor-pointer transition-all ${selectedTag === tag
-                                        ? "bg-[#E2703A] text-white shadow-md !hover:bg-[#d4612e]"
-                                        : "bg-muted hover:bg-muted/80 text-foreground/70 hover:text-foreground"
-                                        }`}
-                                    onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
-                                >
-                                    {tag}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="card-elevated p-6 surface-tint">
-                        <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                            <span className="inline-block w-1 h-5 rounded-full bg-gradient-to-b from-[#E2703A] to-[#EEB76B]"></span>
-                            TechBlogについて
-                        </h2>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                            TechBlogは、エンジニアのための技術記事共有プラットフォームです。
-                            最新の技術情報やノウハウを共有し、学び合いましょう。
-                        </p>
-                    </div>
-                </div>
-            </aside>
         </div>
     )
 }
+

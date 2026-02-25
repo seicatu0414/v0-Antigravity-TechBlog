@@ -3,209 +3,89 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --background: oklch(0.975 0.002 75);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.96 0.002 75);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.91 0.002 75);
-  --input: oklch(0.91 0.002 75);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.175 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.175 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-}
-
 @theme inline {
-  --font-sans: "Noto Sans JP", "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-sans: var(--font-inter), var(--font-noto-sans-jp), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Courier New", monospace;
 
-  /* Material Design inspired color palette */
-  --color-base: #E2703A;
-  --color-main: #EEB76B;
-  --color-accent: #9c3d54;
+  /* Base Paper & Ink colors */
+  --color-background: var(--color-zinc-50);
+  --color-foreground: var(--color-zinc-900);
 
-  --color-background: 30 10% 97%;
-  --color-foreground: 0 0% 10%;
+  /* Surfaces & Hierarchy (No Shadows, Borders Only) */
+  --color-card: var(--color-background);
+  --color-card-foreground: var(--color-foreground);
 
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 0 0% 10%;
+  --color-popover: var(--color-background);
+  --color-popover-foreground: var(--color-foreground);
 
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 0 0% 10%;
+  /* Primary action */
+  --color-primary: var(--color-zinc-900);
+  --color-primary-foreground: var(--color-zinc-50);
 
-  --color-primary: 18 73% 56%;
-  --color-primary-foreground: 0 0% 100%;
+  /* Subdued surfaces (Inputs, code blocks, etc) */
+  --color-secondary: var(--color-zinc-100);
+  --color-secondary-foreground: var(--color-zinc-900);
 
-  --color-secondary: 30 20% 95%;
-  --color-secondary-foreground: 0 0% 15%;
+  /* Muted text and backgrounds */
+  --color-muted: var(--color-zinc-100);
+  --color-muted-foreground: var(--color-zinc-500);
 
-  --color-muted: 30 10% 95%;
-  --color-muted-foreground: 0 0% 40%;
+  /* Hover & Active states */
+  --color-accent: var(--color-zinc-200);
+  --color-accent-foreground: var(--color-zinc-900);
 
-  --color-accent: 345 46% 43%;
-  --color-accent-foreground: 0 0% 100%;
+  /* Status */
+  --color-destructive: var(--color-red-600);
+  --color-destructive-foreground: var(--color-zinc-50);
 
-  --color-destructive: 0 84% 60%;
-  --color-destructive-foreground: 0 0% 100%;
+  /* Structure and Control */
+  --color-border: var(--color-zinc-200);
+  --color-input: var(--color-zinc-100);
+  --color-ring: var(--color-zinc-400);
 
-  --color-border: 30 8% 88%;
-  --color-input: 30 8% 88%;
-  --color-ring: 18 73% 56%;
+  /* Radius constraint for Editorial Tech */
+  --radius: 0.125rem;
 
-  --radius: 0.75rem;
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  /* Disable shadows globally by unsetting them in theme,
+     or setting them to none. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+  --shadow-inner: none;
 }
 
-.dark {
-  --color-background: 0 0% 10%;
-  --color-foreground: 0 0% 98%;
+@layer base {
+  .dark {
+    --color-background: var(--color-zinc-950);
+    --color-foreground: var(--color-zinc-50);
 
-  --color-card: 0 0% 13%;
-  --color-card-foreground: 0 0% 98%;
+    --color-card: var(--color-background);
+    --color-card-foreground: var(--color-foreground);
 
-  --color-popover: 0 0% 13%;
-  --color-popover-foreground: 0 0% 98%;
+    --color-popover: var(--color-background);
+    --color-popover-foreground: var(--color-foreground);
 
-  --color-primary: 18 73% 56%;
-  --color-primary-foreground: 0 0% 100%;
+    --color-primary: var(--color-zinc-50);
+    --color-primary-foreground: var(--color-zinc-950);
 
-  --color-secondary: 38 70% 68%;
-  --color-secondary-foreground: 0 0% 10%;
+    --color-secondary: var(--color-zinc-900);
+    --color-secondary-foreground: var(--color-zinc-50);
 
-  --color-muted: 0 0% 20%;
-  --color-muted-foreground: 0 0% 65%;
+    --color-muted: var(--color-zinc-900);
+    --color-muted-foreground: var(--color-zinc-400);
 
-  --color-accent: 345 46% 43%;
-  --color-accent-foreground: 0 0% 100%;
+    --color-accent: var(--color-zinc-800);
+    --color-accent-foreground: var(--color-zinc-50);
 
-  --color-border: 0 0% 20%;
-  --color-input: 0 0% 20%;
-  --color-ring: var(--ring);
-  --chart-1: var(--chart-1);
-  --chart-2: var(--chart-2);
-  --chart-3: var(--chart-3);
-  --chart-4: var(--chart-4);
-  --chart-5: var(--chart-5);
-  --sidebar: var(--sidebar);
-  --sidebar-foreground: var(--sidebar-foreground);
-  --sidebar-primary: var(--sidebar-primary);
-  --sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --sidebar-accent: var(--sidebar-accent);
-  --sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --sidebar-border: var(--sidebar-border);
-  --sidebar-ring: var(--sidebar-ring);
-}
+    --color-destructive: var(--color-red-900);
+    --color-destructive-foreground: var(--color-zinc-50);
 
-/* ============================
-   Material Design Elevation
-   ============================ */
-.elevation-0 {
-  box-shadow: none;
-}
-
-.elevation-1 {
-  box-shadow:
-    0 2px 6px 0 rgba(0, 0, 0, 0.14),
-    0 1px 3px -1px rgba(0, 0, 0, 0.10);
-}
-
-.elevation-2 {
-  box-shadow:
-    0 4px 12px -1px rgba(0, 0, 0, 0.16),
-    0 2px 6px -2px rgba(0, 0, 0, 0.12);
-}
-
-.elevation-3 {
-  box-shadow:
-    0 12px 24px -4px rgba(0, 0, 0, 0.18),
-    0 4px 10px -4px rgba(0, 0, 0, 0.12);
-}
-
-.elevation-4 {
-  box-shadow:
-    0 24px 38px -6px rgba(0, 0, 0, 0.20),
-    0 10px 16px -6px rgba(0, 0, 0, 0.14);
-}
-
-/* ============================
-   Material Surface Tint
-   ============================ */
-.surface-tint {
-  background: linear-gradient(to bottom,
-      hsl(18, 73%, 56%, 0.04),
-      hsl(18, 73%, 56%, 0.01));
-}
-
-.surface-tint-strong {
-  background: linear-gradient(to bottom,
-      hsl(18, 73%, 56%, 0.08),
-      hsl(18, 73%, 56%, 0.03));
+    --color-border: var(--color-zinc-800);
+    --color-input: var(--color-zinc-900);
+    --color-ring: var(--color-zinc-400);
+  }
 }
 
 /* ============================
@@ -227,66 +107,24 @@
   input,
   textarea,
   select {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Improved focus styles */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-ring;
+    @apply outline-1 outline-offset-1 outline-ring;
   }
 }
 
 /* ============================
-   Material Card Styles
+   Layout Utilities
    ============================ */
-@layer utilities {
-  .card-material {
-    @apply bg-card rounded-2xl border-0;
-    box-shadow:
-      0 2px 8px 0 rgba(0, 0, 0, 0.12),
-      0 1px 4px -1px rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .card-material:hover {
-    box-shadow:
-      0 14px 28px -4px rgba(0, 0, 0, 0.20),
-      0 6px 12px -4px rgba(0, 0, 0, 0.12);
-    transform: translateY(-3px);
-  }
-
-  .card-elevated {
-    @apply bg-card rounded-2xl border-0;
-    box-shadow:
-      0 6px 16px -2px rgba(0, 0, 0, 0.16),
-      0 3px 8px -2px rgba(0, 0, 0, 0.10);
-  }
-
-  .chip {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
-    @apply bg-secondary text-secondary-foreground;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .chip:hover {
-    @apply shadow-sm;
-    filter: brightness(0.97);
-  }
-
-  .btn-material {
-    @apply rounded-xl font-medium;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
-  }
-
-  .btn-material:hover {
-    box-shadow: 0 6px 14px 0 rgba(0, 0, 0, 0.22);
-    transform: translateY(-1px);
-  }
-
-  .btn-material:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
