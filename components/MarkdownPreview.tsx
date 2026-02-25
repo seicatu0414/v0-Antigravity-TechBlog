@@ -4,8 +4,9 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import rehypeRaw from 'rehype-raw'
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
+import rehypeSanitize from 'rehype-sanitize'
 import { preprocessMarkdownContent } from '@/lib/utils/markdown-preprocessor'
+import { MARKDOWN_SANITIZE_SCHEMA } from '@/lib/utils/markdown-sanitize-schema'
 
 export function MarkdownPreview({ content }: { content: string }) {
     const processedContent = preprocessMarkdownContent(content)
@@ -16,42 +17,8 @@ export function MarkdownPreview({ content }: { content: string }) {
                 remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[
                     rehypeRaw,
-                    [
-                        rehypeSanitize,
-                        {
-                            ...defaultSchema,
-                            attributes: {
-                                ...defaultSchema.attributes,
-                                span: [
-                                    ...(defaultSchema.attributes?.span || []),
-                                    ['className', /^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950)$/],
-                                    ['class', /^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950)$/]
-                                ],
-                                div: [
-                                    ...(defaultSchema.attributes?.div || []),
-                                    ['className', /^katex(?:-|$)/],
-                                    ['class', /^katex(?:-|$)/]
-                                    // Math equations may have `math` or `katex-display`
-                                ],
-                                math: [
-                                    ...(defaultSchema.attributes?.math || []),
-                                    ['className', /^katex(?:-|$)/],
-                                    ['class', /^katex(?:-|$)/]
-                                ],
-                                code: [
-                                    ...(defaultSchema.attributes?.code || []),
-                                    ['className', /^language-[a-z0-9-]+$/i],
-                                    ['class', /^language-[a-z0-9-]+$/i]
-                                ],
-                                '*': [
-                                    ...(defaultSchema.attributes?.['*'] || []),
-                                    ['className', /^katex(?:-|$)/],
-                                    ['class', /^katex(?:-|$)/]
-                                ]
-                            }
-                        }
-                    ],
-                    rehypeKatex
+                    rehypeKatex,
+                    [rehypeSanitize, MARKDOWN_SANITIZE_SCHEMA]
                 ]}
                 components={{
                     h1({ children }) {

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { X, Upload, Loader2, Image as ImageIcon, Bold, Italic, Heading, Code, Table, Palette, Sigma, Link as LinkIcon, List, Quote, ListOrdered } from 'lucide-react'
+import { X, Upload, Loader2, Image as ImageIcon, Bold, Italic, Heading, Code, Table, Palette, Sigma, Link as LinkIcon, List, Quote, ListOrdered, FileCode } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -72,7 +72,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
 
         setContent(newContent)
 
-        // Return focus and selection
+        // フォーカスと選択状態を復元
         setTimeout(() => {
             if (textareaRef.current) {
                 textareaRef.current.focus()
@@ -126,9 +126,6 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
         const file = e.target.files?.[0]
         if (!file) return
 
-        const uploadToast = '画像をアップロード中...'
-        // Usually you'd show a toast here. For now setting temporary error just to show activity
-
         const result = await uploadImage(file)
         if (result.error) {
             setError(result.error)
@@ -138,14 +135,14 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
         if (result.url) {
             const markdownImage = `\n![${file.name}](${result.url})\n`
 
-            // Insert at cursor
+            // カーソル位置に挿入
             if (textareaRef.current) {
                 const start = textareaRef.current.selectionStart
                 const end = textareaRef.current.selectionEnd
                 const newContent = content.substring(0, start) + markdownImage + content.substring(end)
                 setContent(newContent)
 
-                // Reposition cursor after the state updates (using setTimeout as simple hack)
+                // 状態更新後にカーソル位置を再設定
                 setTimeout(() => {
                     if (textareaRef.current) {
                         textareaRef.current.selectionStart = start + markdownImage.length
@@ -158,7 +155,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
             }
         }
 
-        // Reset input
+        // 入力をリセット
         e.target.value = ''
     }
 
@@ -324,7 +321,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                                 <div className="w-px h-4 bg-border mx-1" />
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('[', '](https://)')} title="リンク"><LinkIcon className="h-4 w-4" /></Button>
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('`', '`')} title="インラインコード"><Code className="h-4 w-4" /></Button>
-                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n```\n', '\n```\n')} title="コードブロック"><Code className="h-5 w-5" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n```\n', '\n```\n')} title="コードブロック"><FileCode className="h-4 w-4" /></Button>
                                 <div className="w-px h-4 bg-border mx-1" />
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n| 列1 | 列2 |\n|---|---|\n| 値1 | 値2 |\n')} title="テーブル"><Table className="h-4 w-4" /></Button>
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n$$\n', '\n$$\n')} title="数式 (KaTeX)"><Sigma className="h-4 w-4" /></Button>
@@ -338,7 +335,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                                     <DropdownMenuContent align="start" className="w-[140px] p-2">
                                         <div className="grid grid-cols-5 gap-1.5">
                                             {COLOR_OPTIONS.map(color => (
-                                                <DropdownMenuItem key={color.value} className="p-0.5 cursor-pointer focus:bg-transparent flex justify-center" onClick={(e) => { e.preventDefault(); insertTextAtCursor(`<span className="text-${color.value}">`, '</span>') }} title={color.name}>
+                                                <DropdownMenuItem key={color.value} className="p-0.5 cursor-pointer focus:bg-transparent flex justify-center" onClick={(e) => { e.preventDefault(); insertTextAtCursor(`<span class="text-${color.value}">`, '</span>') }} title={color.name}>
                                                     <div className={`w-5 h-5 rounded-full ${color.class} hover:scale-110 transition-transform shadow-sm`} />
                                                 </DropdownMenuItem>
                                             ))}
