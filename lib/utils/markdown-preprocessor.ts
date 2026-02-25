@@ -34,6 +34,12 @@ export function preprocessMarkdownContent(rawMarkdown: string): string {
             continue;
         }
 
+        // 4スペースまたはタブによるインデント式コードブロックの判定
+        if (/^( {4}|\t)/.test(line)) {
+            processedLines.push(line);
+            continue;
+        }
+
         if (trimmedLine === '') {
             // 空行を維持
             processedLines.push('');

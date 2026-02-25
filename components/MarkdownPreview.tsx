@@ -17,8 +17,8 @@ export function MarkdownPreview({ content }: { content: string }) {
                 remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[
                     rehypeRaw,
-                    [rehypeSanitize, MARKDOWN_SANITIZE_SCHEMA],
-                    rehypeKatex
+                    rehypeKatex,
+                    [rehypeSanitize, MARKDOWN_SANITIZE_SCHEMA]
                 ]}
                 components={{
                     h1({ children }) {

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* text color safelist for markdown editor */
+@source inline('<div class="text-red-500 text-blue-500 text-green-500 text-yellow-500 text-purple-500 text-orange-500 text-sky-500 text-emerald-500 text-indigo-500 text-pink-500 text-[#E2703A]"></div>');
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
