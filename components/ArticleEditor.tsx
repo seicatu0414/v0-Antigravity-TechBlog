@@ -56,7 +56,6 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
     const [coverFile, setCoverFile] = useState<File | null>(null)
     const [error, setError] = useState<string | null>(null)
 
-    const fileInputRef = useRef<HTMLInputElement>(null)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const insertTextAtCursor = (before: string, after: string = '') => {
@@ -308,7 +307,7 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                         </TabsList>
 
                         <TabsContent value="edit" className="mt-4 space-y-2">
-                            {/* Toolbar */}
+                            {/* ツールバー */}
                             <div className="flex flex-wrap items-center gap-1 p-1.5 bg-muted/40 rounded-xl border border-border/50 shadow-sm overflow-x-auto">
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('**', '**')} title="太字"><Bold className="h-4 w-4" /></Button>
                                 <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('*', '*')} title="斜体"><Italic className="h-4 w-4" /></Button>
