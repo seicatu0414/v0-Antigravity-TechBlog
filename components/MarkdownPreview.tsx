@@ -17,8 +17,8 @@ export function MarkdownPreview({ content }: { content: string }) {
                 remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[
                     rehypeRaw,
-                    rehypeKatex,
-                    [rehypeSanitize, MARKDOWN_SANITIZE_SCHEMA]
+                    [rehypeSanitize, MARKDOWN_SANITIZE_SCHEMA],
+                    rehypeKatex
                 ]}
                 components={{
                     h1({ children }) {
@@ -36,17 +36,17 @@ export function MarkdownPreview({ content }: { content: string }) {
                     img({ src, alt }) {
                         return <img src={src} alt={alt} className="rounded-lg max-w-full my-4 border shadow-sm" />
                     },
-                    code({ className, children, ...props }) {
-                        const isInline = !className
-                        if (isInline) {
+                    pre({ children, ...props }: any) {
+                        return <pre className="bg-muted p-4 rounded-lg overflow-x-auto my-4" {...props}>{children}</pre>
+                    },
+                    code({ inline, className, children, ...props }: any) {
+                        if (inline) {
                             return <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props}>{children}</code>
                         }
                         return (
-                            <pre className="bg-muted p-4 rounded-lg overflow-x-auto my-4">
-                                <code className={`text-sm font-mono ${className || ''}`} {...props}>
-                                    {children}
-                                </code>
-                            </pre>
+                            <code className={`text-sm font-mono ${className || ''}`} {...props}>
+                                {children}
+                            </code>
                         )
                     }
                 }}
