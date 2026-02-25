@@ -2,6 +2,12 @@ import { defaultSchema } from 'rehype-sanitize'
 
 export const MARKDOWN_SANITIZE_SCHEMA = {
     ...defaultSchema,
+    tagNames: [
+        ...(defaultSchema.tagNames || []),
+        'math', 'semantics', 'mrow', 'mi', 'mo', 'mn',
+        'msup', 'msub', 'mfrac', 'mover', 'munder',
+        'mtable', 'mtr', 'mtd', 'mtext', 'annotation'
+    ],
     attributes: {
         ...defaultSchema.attributes,
         span: [
