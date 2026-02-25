@@ -8,10 +8,29 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { X, Upload, Loader2, Image as ImageIcon } from 'lucide-react'
+import { X, Upload, Loader2, Image as ImageIcon, Bold, Italic, Heading, Code, Table, Palette, Sigma, Link as LinkIcon, List, Quote, ListOrdered } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { createArticle, updateArticle, uploadImage } from '@/lib/actions/article'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+
+const COLOR_OPTIONS = [
+    { name: '赤', value: 'red-500', class: 'bg-red-500' },
+    { name: '青', value: 'blue-500', class: 'bg-blue-500' },
+    { name: '緑', value: 'green-500', class: 'bg-green-500' },
+    { name: '黄', value: 'yellow-500', class: 'bg-yellow-500' },
+    { name: '紫', value: 'purple-500', class: 'bg-purple-500' },
+    { name: 'オレンジ', value: 'orange-500', class: 'bg-orange-500' },
+    { name: 'スカイ', value: 'sky-500', class: 'bg-sky-500' },
+    { name: 'エメラルド', value: 'emerald-500', class: 'bg-emerald-500' },
+    { name: 'インディゴ', value: 'indigo-500', class: 'bg-indigo-500' },
+    { name: 'ピンク', value: 'pink-500', class: 'bg-pink-500' }
+]
 
 
 export type ArticleEditorProps = {
@@ -39,6 +58,35 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
 
     const fileInputRef = useRef<HTMLInputElement>(null)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    const insertTextAtCursor = (before: string, after: string = '') => {
+        if (!textareaRef.current) return
+
+        const start = textareaRef.current.selectionStart
+        const end = textareaRef.current.selectionEnd
+        const selectedText = content.substring(start, end)
+
+        const placeholder = after ? 'テキスト' : ''
+        const replacement = before + (selectedText || placeholder) + after
+        const newContent = content.substring(0, start) + replacement + content.substring(end)
+
+        setContent(newContent)
+
+        // Return focus and selection
+        setTimeout(() => {
+            if (textareaRef.current) {
+                textareaRef.current.focus()
+                const newCursorPos = start + before.length + (selectedText || placeholder).length
+                if (!selectedText && placeholder) {
+                    textareaRef.current.selectionStart = start + before.length
+                    textareaRef.current.selectionEnd = start + before.length + placeholder.length
+                } else {
+                    textareaRef.current.selectionStart = newCursorPos
+                    textareaRef.current.selectionEnd = newCursorPos
+                }
+            }
+        }, 10)
+    }
 
     const handleAddTag = () => {
         if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -262,14 +310,50 @@ export function ArticleEditor({ article }: ArticleEditorProps) {
                             <TabsTrigger value="preview">プレビュー</TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="edit" className="mt-4">
+                        <TabsContent value="edit" className="mt-4 space-y-2">
+                            {/* Toolbar */}
+                            <div className="flex flex-wrap items-center gap-1 p-1.5 bg-muted/40 rounded-xl border border-border/50 shadow-sm overflow-x-auto">
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('**', '**')} title="太字"><Bold className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('*', '*')} title="斜体"><Italic className="h-4 w-4" /></Button>
+                                <div className="w-px h-4 bg-border mx-1" />
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('### ')} title="見出し"><Heading className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('> ')} title="引用"><Quote className="h-4 w-4" /></Button>
+                                <div className="w-px h-4 bg-border mx-1" />
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('- ')} title="箇条書き"><List className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('1. ')} title="番号付きリスト"><ListOrdered className="h-4 w-4" /></Button>
+                                <div className="w-px h-4 bg-border mx-1" />
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('[', '](https://)')} title="リンク"><LinkIcon className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('`', '`')} title="インラインコード"><Code className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n```\n', '\n```\n')} title="コードブロック"><Code className="h-5 w-5" /></Button>
+                                <div className="w-px h-4 bg-border mx-1" />
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n| 列1 | 列2 |\n|---|---|\n| 値1 | 値2 |\n')} title="テーブル"><Table className="h-4 w-4" /></Button>
+                                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => insertTextAtCursor('\n$$\n', '\n$$\n')} title="数式 (KaTeX)"><Sigma className="h-4 w-4" /></Button>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" title="文字色">
+                                            <Palette className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-[140px] p-2">
+                                        <div className="grid grid-cols-5 gap-1.5">
+                                            {COLOR_OPTIONS.map(color => (
+                                                <DropdownMenuItem key={color.value} className="p-0.5 cursor-pointer focus:bg-transparent flex justify-center" onClick={(e) => { e.preventDefault(); insertTextAtCursor(`<span className="text-${color.value}">`, '</span>') }} title={color.name}>
+                                                    <div className={`w-5 h-5 rounded-full ${color.class} hover:scale-110 transition-transform shadow-sm`} />
+                                                </DropdownMenuItem>
+                                            ))}
+                                        </div>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+
                             <Textarea
                                 ref={textareaRef}
                                 id="content"
                                 placeholder="# 見出し&#10;&#10;本文をMarkdown形式で入力できます...&#10;&#10;## コード例&#10;```javascript&#10;console.log('Hello World');&#10;```"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="min-h-[400px] font-mono text-sm leading-relaxed rounded-xl bg-muted/30 border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
+                                className="min-h-[400px] font-mono text-sm leading-relaxed rounded-xl bg-muted/20 border-border/50 shadow-inner focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all resize-y"
                             />
                         </TabsContent>
 
