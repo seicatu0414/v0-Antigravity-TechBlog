@@ -41,8 +41,8 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="ja">
-      <body className={`${inter.variable} ${notoSansJP.variable} ${jetbrainsMono.variable} font-sans antialiased text-foreground bg-background`}>
+    <html lang="ja" suppressHydrationWarning>
+      <body className={`${inter.variable} ${notoSansJP.variable} ${jetbrainsMono.variable} font-sans antialiased text-foreground bg-background`} suppressHydrationWarning>
         <Header user={user} />
         <main className="min-h-[calc(100vh-64px-200px)]">{children}</main>
         <Footer />

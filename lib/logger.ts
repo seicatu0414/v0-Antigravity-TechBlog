@@ -26,6 +26,9 @@ export class Logger {
         if (typeof value === 'string') {
             return value;
         }
+        if (value instanceof Error) {
+            return value.stack || value.message || String(value);
+        }
         try {
             const result = JSON.stringify(value);
             return typeof result === 'string' ? result : String(value);

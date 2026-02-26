@@ -143,6 +143,19 @@ export async function getArticle(id: string): Promise<UIArticle | null> {
     }
 }
 
+export async function getActiveHeroImages() {
+    try {
+        const images = await prisma.heroImage.findMany({
+            where: { isActive: true },
+            orderBy: { order: 'asc' }
+        })
+        return images
+    } catch (error) {
+        Logger.error('Failed to fetch active hero images:', error)
+        return []
+    }
+}
+
 
 export async function getPopularTags(): Promise<string[]> {
     try {

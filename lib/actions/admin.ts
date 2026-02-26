@@ -56,6 +56,7 @@ export async function getUsers() {
     await requireAdmin()
 
     return await prisma.user.findMany({
+        where: { isDeleted: false },
         orderBy: { createdAt: 'desc' },
         select: {
             id: true,
@@ -96,8 +97,22 @@ export async function deleteUser(userId: string) {
         throw new Error('自身のアカウントは削除できません')
     }
 
-    await prisma.user.delete({
-        where: { id: userId }
+    // 論理削除と匿名化
+    const timestamp = Date.now()
+    await prisma.user.update({
+        where: { id: userId },
+        data: {
+            isDeleted: true,
+            email: `deleted_${timestamp}_${userId.slice(0, 8)}@example.com`,
+            password: 'deleted_user', // Hash values shouldn't matter since login checks isDeleted
+            firstName: 'Unknown',
+            lastName: 'User',
+            nickname: 'Unknown User',
+            avatarUrl: null,
+            bio: null,
+            githubUrl: null,
+            role: 'general' // 削除されるため一般ユーザーに戻す
+        }
     })
 
     revalidatePath('/admin/users')

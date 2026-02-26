@@ -44,11 +44,24 @@ export function HeroTable({ initialImages }: { initialImages: HeroImage[] }) {
             const res = await uploadHeroImage(formData)
             if (res.error) throw new Error(res.error)
 
-            // Reload page to get fresh data
+            if (res.image) {
+                setImages([...images, res.image])
+            }
+
+            // Reset input so the same file can be uploaded again if needed
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+
+            // Reload page to get fresh data for consistency
             router.refresh()
         } catch (err: any) {
             alert(err.message)
+        } finally {
             setIsUploading(false)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
         }
     }
 
