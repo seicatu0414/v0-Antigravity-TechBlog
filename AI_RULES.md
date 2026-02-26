@@ -17,6 +17,10 @@
 - **状態管理**: Redux
 - **データベース/ORM**: Prisma
 
+## 2.1 データベース/データモデリング (Database & Data Modeling)
+- **削除ポリシー**: ユーザーや主要なマスタデータ等の削除処理を実装する際は、物理削除 (`delete`) ではなく `isDeleted` フラグを用いた**論理削除**を基本とすること。
+- **マイグレーション**: Prismaのスキーマ (`schema.prisma`) を変更した後は、必ず `npx prisma migrate dev` でマイグレーションファイルを生成・適用すること。
+
 ## 3. プロジェクト構成 (Project Structure)
 - `/app`: Next.js App Router のページとレイアウト。
 - `/components`: 再利用可能な UI コンポーネント。
