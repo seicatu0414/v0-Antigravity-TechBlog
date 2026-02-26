@@ -48,7 +48,7 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
 
     const handleDelete = (userId: string) => {
         if (userId === currentUserId) return alert('自身のアカウントは削除できません')
-        if (!confirm('本当にこのユーザーを削除しますか？\n(注: 投稿した記事やコメントも全て削除されます)')) return
+        if (!confirm('本当にこのユーザーを削除しますか？\n(注: ユーザーは匿名化(Unknown User)され、記事はそのまま残ります)')) return
 
         startTransition(async () => {
             try {

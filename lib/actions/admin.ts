@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/actions/admin-helpers'
+import { hashPassword } from '@/lib/utils/password'
+import { randomUUID } from 'crypto'
 
 export async function getDashboardStats() {
     await requireAdmin()
@@ -15,8 +17,8 @@ export async function getDashboardStats() {
         totalTags,
         totalComments
     ] = await Promise.all([
-        prisma.user.count(),
-        prisma.user.count({ where: { role: 'admin' } }),
+        prisma.user.count({ where: { isDeleted: false } }),
+        prisma.user.count({ where: { role: 'admin', isDeleted: false } }),
         prisma.article.count(),
         prisma.article.count({ where: { status: 'published' } }),
         prisma.tag.count(),
@@ -24,6 +26,7 @@ export async function getDashboardStats() {
     ])
 
     const recentUsers = await prisma.user.findMany({
+        where: { isDeleted: false },
         orderBy: { createdAt: 'desc' },
         take: 5,
         select: {
@@ -99,12 +102,14 @@ export async function deleteUser(userId: string) {
 
     // 論理削除と匿名化
     const timestamp = Date.now()
+    const dummyPasswordHash = await hashPassword(randomUUID())
+
     await prisma.user.update({
         where: { id: userId },
         data: {
             isDeleted: true,
             email: `deleted_${timestamp}_${userId.slice(0, 8)}@example.com`,
-            password: 'deleted_user', // Hash values shouldn't matter since login checks isDeleted
+            password: dummyPasswordHash,
             firstName: 'Unknown',
             lastName: 'User',
             nickname: 'Unknown User',

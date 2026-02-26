@@ -15,6 +15,7 @@ export async function getAdminUserArticles(userId: string) {
             firstName: true,
             lastName: true,
             nickname: true,
+            avatarUrl: true,
             isDeleted: true
         }
     })
@@ -44,6 +45,11 @@ export async function getAdminUserArticles(userId: string) {
 
 export async function deleteAdminArticle(articleId: string, userId: string) {
     await requireAdmin()
+
+    const article = await prisma.article.findUnique({ where: { id: articleId } })
+    if (!article || article.authorId !== userId) {
+        throw new Error('Article not found or does not belong to this user')
+    }
 
     await prisma.article.delete({
         where: { id: articleId }

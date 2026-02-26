@@ -26,14 +26,14 @@ export function HeroBanner({ images = [] }: { images?: { id: string, url: string
             >
                 <CarouselContent className="h-full ml-0">
                     {hasImages ? (
-                        images.map((img) => (
+                        images.map((img, index) => (
                             <CarouselItem key={img.id} className="relative h-64 w-full md:h-80 lg:h-96 pl-0">
                                 <Image
                                     src={img.url}
                                     alt="TechBlog Hero"
                                     fill
                                     className="object-cover"
-                                    priority
+                                    priority={index === 0}
                                 />
                             </CarouselItem>
                         ))
