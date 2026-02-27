@@ -19,7 +19,7 @@ export async function login(prevState: any, formData: FormData) {
     try {
         const user = await prisma.user.findUnique({ where: { email } })
 
-        if (!user || !user.password) {
+        if (!user || user.isDeleted || !user.password) {
             return { message: 'メールアドレスまたはパスワードが正しくありません。' }
         }
 

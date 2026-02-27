@@ -3,7 +3,7 @@
 import { Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { getAuthCookie } from '@/lib/utils/cookie-auth'
+import { getAuthCookie, getUserFromSession } from '@/lib/utils/cookie-auth'
 import { verifyToken } from '@/lib/auth-system'
 import { Logger } from '@/lib/logger'
 
@@ -92,11 +92,10 @@ export async function getArticles(options?: {
 
 export async function getArticle(id: string): Promise<UIArticle | null> {
     try {
-        const token = await getAuthCookie()
+        const payload = await getUserFromSession()
         let userId: string | null = null
-        if (token) {
-            const payload = await verifyToken(token)
-            if (payload) userId = payload.userId as string
+        if (payload) {
+            userId = payload.userId as string
         }
 
         const article = await prisma.article.findUnique({
@@ -140,6 +139,19 @@ export async function getArticle(id: string): Promise<UIArticle | null> {
     } catch (error) {
         Logger.error('Failed to fetch article:', error)
         return null
+    }
+}
+
+export async function getActiveHeroImages() {
+    try {
+        const images = await prisma.heroImage.findMany({
+            where: { isActive: true },
+            orderBy: { order: 'asc' }
+        })
+        return images
+    } catch (error) {
+        Logger.error('Failed to fetch active hero images:', error)
+        return []
     }
 }
 
@@ -198,11 +210,8 @@ export async function getUsers(search?: string) {
 
 export async function toggleBookmark(articleId: string) {
     try {
-        const token = await getAuthCookie()
-        if (!token) return { error: 'Unauthorized' }
-
-        const payload = await verifyToken(token)
-        if (!payload || !payload.userId) return { error: 'Invalid token' }
+        const payload = await getUserFromSession()
+        if (!payload || !payload.userId) return { error: 'Unauthorized' }
 
         const userId = payload.userId as string
 
@@ -241,10 +250,7 @@ export async function toggleBookmark(articleId: string) {
 
 export async function getBookmarkedArticles(): Promise<UIArticle[]> {
     try {
-        const token = await getAuthCookie()
-        if (!token) return []
-
-        const payload = await verifyToken(token)
+        const payload = await getUserFromSession()
         if (!payload || !payload.userId) return []
 
         const userId = payload.userId as string

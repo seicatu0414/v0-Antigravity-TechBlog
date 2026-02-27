@@ -48,7 +48,7 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
 
     const handleDelete = (userId: string) => {
         if (userId === currentUserId) return alert('自身のアカウントは削除できません')
-        if (!confirm('本当にこのユーザーを削除しますか？\n(注: 投稿した記事やコメントも全て削除されます)')) return
+        if (!confirm('本当にこのユーザーを削除しますか？\n(注: ユーザーは匿名化(Unknown User)され、記事はそのまま残ります)')) return
 
         startTransition(async () => {
             try {
@@ -119,12 +119,18 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>アクション</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
+                                                <DropdownMenuItem asChild>
+                                                    <a href={`/admin/users/${user.id}/articles`} className="w-full flex items-center cursor-pointer">
+                                                        <Calendar className="mr-2 h-4 w-4" /> 記事一覧・管理
+                                                    </a>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
                                                 {user.role === 'general' ? (
-                                                    <DropdownMenuItem onClick={() => handleRoleChange(user.id, 'admin')} disabled={user.id === currentUserId}>
+                                                    <DropdownMenuItem onClick={() => handleRoleChange(user.id, 'admin')} disabled={user.id === currentUserId} className="cursor-pointer">
                                                         <ShieldAlert className="mr-2 h-4 w-4" /> 管理者にする
                                                     </DropdownMenuItem>
                                                 ) : (
-                                                    <DropdownMenuItem onClick={() => handleRoleChange(user.id, 'general')} disabled={user.id === currentUserId}>
+                                                    <DropdownMenuItem onClick={() => handleRoleChange(user.id, 'general')} disabled={user.id === currentUserId} className="cursor-pointer">
                                                         一般ユーザーにする
                                                     </DropdownMenuItem>
                                                 )}
@@ -132,7 +138,7 @@ export function UserTable({ initialUsers, currentUserId }: { initialUsers: UserD
                                                 <DropdownMenuItem
                                                     onClick={() => handleDelete(user.id)}
                                                     disabled={user.id === currentUserId}
-                                                    className="text-red-600 focus:bg-red-50 focus:text-red-600"
+                                                    className="text-red-600 focus:bg-red-50 focus:text-red-600 cursor-pointer"
                                                 >
                                                     <Trash2 className="mr-2 h-4 w-4" /> アカウント削除
                                                 </DropdownMenuItem>

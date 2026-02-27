@@ -58,7 +58,7 @@ export async function uploadHeroImage(formData: FormData) {
         })
         const newOrder = maxOrderItem ? maxOrderItem.order + 1 : 0
 
-        await prisma.heroImage.create({
+        const newImage = await prisma.heroImage.create({
             data: {
                 url,
                 order: newOrder,
@@ -67,7 +67,8 @@ export async function uploadHeroImage(formData: FormData) {
         })
 
         revalidatePath('/admin/hero-images')
-        return { success: true }
+        revalidatePath('/')
+        return { success: true, image: newImage }
     } catch (e: any) {
         Logger.error('Failed to upload hero image:', e)
         return { error: e.message || 'Internal server error' }

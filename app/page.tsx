@@ -1,5 +1,5 @@
 
-import { getArticles, getPopularTags } from "./actions"
+import { getArticles, getPopularTags, getActiveHeroImages } from "./actions"
 import { ArticleList } from "@/components/article-list"
 
 export const dynamic = 'force-dynamic'
@@ -13,5 +13,6 @@ export default async function Home({
   const q = resolvedSearchParams?.q || null
   const { articles } = await getArticles({ search: q })
   const popularTags = await getPopularTags()
-  return <ArticleList initialArticles={articles} popularTags={popularTags} />
+  const heroImages = await getActiveHeroImages()
+  return <ArticleList initialArticles={articles} popularTags={popularTags} heroImages={heroImages} />
 }

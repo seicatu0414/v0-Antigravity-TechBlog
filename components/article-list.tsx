@@ -22,7 +22,7 @@ type UserProfile = {
     articlesCount: number
 }
 
-export function ArticleList({ initialArticles, popularTags }: { initialArticles: UIArticle[], popularTags: string[] }) {
+export function ArticleList({ initialArticles, popularTags, heroImages }: { initialArticles: UIArticle[], popularTags: string[], heroImages: { id: string, url: string }[] }) {
     const [activeTab, setActiveTab] = useState<"latest" | "ranking">("latest")
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
@@ -137,7 +137,7 @@ export function ArticleList({ initialArticles, popularTags }: { initialArticles:
 
     return (
         <div>
-            <HeroBanner />
+            <HeroBanner images={heroImages} />
 
             <SearchFilterBar
                 searchQuery={searchQuery}

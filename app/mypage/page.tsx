@@ -26,7 +26,8 @@ export default async function MyPage() {
     }
   })
 
-  if (!user) redirect('/login')
+  // Block if user physically doesn't exist or is logically deleted
+  if (!user || user.isDeleted) redirect('/login')
 
   const bookmarkedArticles = await getBookmarkedArticles()
   const { articles: userArticles } = await getArticles({ authorId: payload.userId })

@@ -20,6 +20,7 @@ model User {
   avatarUrl     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  isDeleted     Boolean   @default(false)
 
   articles      Article[]
   comments      Comment[]
