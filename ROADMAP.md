@@ -17,9 +17,9 @@ This document outlines the planned features and development roadmap for the proj
 
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
-  - [ ] Markdownエディタ (react-markdown)
+  - [x] Markdownエディタ (react-markdown)
   - [x] ライブプレビュー (Preview Page)
-  - [ ] タグ入力 (自由表記)
+  - [x] タグ入力 (自由表記)
   - [x] カバー画像アップロード (スキーマ修正・エラー対応完了)
   - [x] 投稿ボタン → 記事一覧へ遷移
 
