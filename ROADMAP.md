@@ -66,13 +66,13 @@ This document outlines the planned features and development roadmap for the proj
 
 ### 6. コメント機能
 - **コメント投稿**:
-  - [ ] 記事詳細画面からコメント投稿
-  - [ ] ログインユーザーのみ投稿可能
-  - [ ] `lib/data/postgres/comments.ts`
+  - [x] 記事詳細画面からコメント投稿
+  - [x] ログインユーザーのみ投稿可能
+  - [x] `lib/data/postgres/comments.ts` (Implemented as `lib/actions/comment.ts`)
 
 - **コメント表示**:
-  - [ ] 記事詳細画面に表示
-  - [ ] 投稿者名、投稿日時
+  - [x] 記事詳細画面に表示
+  - [x] 投稿者名、投稿日時
 
 ### 7. 記事共有機能
 - **現状**: [ ] 実装済み (Verify)
