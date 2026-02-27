@@ -35,8 +35,8 @@ This document outlines the planned features and development roadmap for the proj
 ### 3. 記事検索・フィルタリング
 - **記事一覧画面**: `/` (ホーム) (Exist)
   - [x] タグフィルター (Backend logic exists, UI partially connected)
-  - [ ] ページネーション (20件ずつ)
-  - [ ] 「さらに表示」ボタン
+  - [x] ページネーション (9件ずつ)
+  - [x] 「さらに表示」ボタン
   - [x] ヘッダー検索
 
 ### 4. ブックマーク機能
@@ -78,7 +78,7 @@ This document outlines the planned features and development roadmap for the proj
 - **現状**: [ ] 実装済み (Verify)
 
 ### 8. ページネーション
-- **記事一覧**: [ ] 20件ずつ表示、「さらに表示」ボタン
+- **記事一覧**: [x] 9件ずつ表示、「さらに表示」ボタン
 - **管理ダッシュボード**: [ ] お知らせ10件ずつ表示
 
 ## マイページ画面の詳細
