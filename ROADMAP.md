@@ -13,13 +13,14 @@ This document outlines the planned features and development roadmap for the proj
   - [x] `lib/auth-system.ts`: JWT統一認証
   - [x] `lib/utils/cookie-auth.ts`: Cookie認証ヘルパー
   - [x] `lib/actions/auth.ts`: Server Actions
+  - [x] 論理削除済みユーザーのトークン無効化・アクセスブロック
 
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
   - [ ] Markdownエディタ (react-markdown)
   - [x] ライブプレビュー (Preview Page)
   - [ ] タグ入力 (自由表記)
-  - [ ] カバー画像アップロード
+  - [x] カバー画像アップロード (スキーマ修正・エラー対応完了)
   - [x] 投稿ボタン → 記事一覧へ遷移
 
 - **記事編集**: `/articles/[id]/edit`
@@ -45,7 +46,7 @@ This document outlines the planned features and development roadmap for the proj
 
 - **ブックマーク一覧**:
   - [x] マイページで確認可能
-  - [ ] タブ切り替え (投稿記事 / ブックマーク)
+  - [x] タブ切り替え (投稿記事 / ブックマーク)
 
 ### 5. プロフィール管理
 - **プロフィール画面**: `/profile/[id]` (Exist)
@@ -89,8 +90,8 @@ This document outlines the planned features and development roadmap for the proj
 2. ✅ ニックネーム確認・編集
 3. ✅ GitHub URL確認・編集
 4. ✅ 自己紹介確認・編集
-5. [ ] 投稿記事 / ブックマーク タブ切り替え
-6. [ ] 投稿記事カード表示
+5. [x] 投稿記事 / ブックマーク タブ切り替え
+6. [x] 投稿記事カード表示
 7. ✅ ブックマーク記事カード表示
 
 ## 管理者機能
@@ -139,10 +140,10 @@ This document outlines the planned features and development roadmap for the proj
 - [ ] 記事投稿・管理 (Markdownエディタ等)
 
 ## Completed
-- [x] ユーザー認証・認可 (JWT, Cookie)
-- [x] 記事投稿・閲覧基盤
+- [x] ユーザー認証・認可 (JWT, Cookie、論理削除ユーザーのトークン無効化)
+- [x] 記事投稿・閲覧基盤 (カバー画像オプショナル化と関連エラー修正)
 - [x] プロフィール管理 (公開プロフィール/編集機能/アバターアップロード)
-- [x] コードレビュー修正
+- [x] コードレビュー対応 (KaTeXスタイル許可、Secrets Manager修正、CSS翻訳)
 - [x] ヘッダー検索
-- [x] ブックマーク機能 (追加/削除/一覧)
+- [x] ブックマーク機能 (追加/削除/一覧、MyPageタブ切り替え、E2Eテスト検証)
 - [x] コメント機能
