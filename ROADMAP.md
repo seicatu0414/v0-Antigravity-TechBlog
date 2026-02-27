@@ -24,8 +24,8 @@ This document outlines the planned features and development roadmap for the proj
   - [x] 投稿ボタン → 記事一覧へ遷移
 
 - **記事編集**: `/articles/[id]/edit`
-  - [ ] 既存記事の編集
-  - [ ] 下書き保存
+  - [x] 既存記事の編集
+  - [x] 下書き保存
 
 - **記事詳細**: `/articles/[id]`
   - [x] Markdown表示
