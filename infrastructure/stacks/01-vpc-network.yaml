@@ -217,6 +217,16 @@ Resources:
           ToPort: 443
           CidrIp: 0.0.0.0/0
           Description: HTTPS outbound for AWS APIs
+        - IpProtocol: udp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: DNS resolution (UDP)
+        - IpProtocol: tcp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: DNS resolution (TCP)
       Tags:
         - Key: Name
           Value: !Sub '${ProjectName}-${Environment}-vpc-connector-sg'
