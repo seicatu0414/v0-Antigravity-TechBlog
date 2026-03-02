@@ -17,26 +17,26 @@ This document outlines the planned features and development roadmap for the proj
 
 ### 2. 記事投稿・管理
 - **記事投稿画面**: `/post` (Exist)
-  - [ ] Markdownエディタ (react-markdown)
+  - [x] Markdownエディタ (react-markdown)
   - [x] ライブプレビュー (Preview Page)
-  - [ ] タグ入力 (自由表記)
+  - [x] タグ入力 (自由表記)
   - [x] カバー画像アップロード (スキーマ修正・エラー対応完了)
   - [x] 投稿ボタン → 記事一覧へ遷移
 
 - **記事編集**: `/articles/[id]/edit`
-  - [ ] 既存記事の編集
-  - [ ] 下書き保存
+  - [x] 既存記事の編集
+  - [x] 下書き保存
 
 - **記事詳細**: `/articles/[id]`
   - [x] Markdown表示
-  - [ ] コメント表示
+  - [x] コメント表示
   - [x] ブックマークボタン
 
 ### 3. 記事検索・フィルタリング
 - **記事一覧画面**: `/` (ホーム) (Exist)
   - [x] タグフィルター (Backend logic exists, UI partially connected)
-  - [ ] ページネーション (20件ずつ)
-  - [ ] 「さらに表示」ボタン
+  - [x] ページネーション (9件ずつ)
+  - [x] 「さらに表示」ボタン
   - [x] ヘッダー検索
 
 ### 4. ブックマーク機能
@@ -66,19 +66,19 @@ This document outlines the planned features and development roadmap for the proj
 
 ### 6. コメント機能
 - **コメント投稿**:
-  - [ ] 記事詳細画面からコメント投稿
-  - [ ] ログインユーザーのみ投稿可能
-  - [ ] `lib/data/postgres/comments.ts`
+  - [x] 記事詳細画面からコメント投稿
+  - [x] ログインユーザーのみ投稿可能
+  - [x] `lib/data/postgres/comments.ts` (Implemented as `lib/actions/comment.ts`)
 
 - **コメント表示**:
-  - [ ] 記事詳細画面に表示
-  - [ ] 投稿者名、投稿日時
+  - [x] 記事詳細画面に表示
+  - [x] 投稿者名、投稿日時
 
 ### 7. 記事共有機能
 - **現状**: [ ] 実装済み (Verify)
 
 ### 8. ページネーション
-- **記事一覧**: [ ] 20件ずつ表示、「さらに表示」ボタン
+- **記事一覧**: [x] 9件ずつ表示、「さらに表示」ボタン
 - **管理ダッシュボード**: [ ] お知らせ10件ずつ表示
 
 ## マイページ画面の詳細
