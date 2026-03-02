@@ -103,9 +103,9 @@ Resources:
               - Name: NEXT_TELEMETRY_DISABLED
                 Value: '1'
             RuntimeEnvironmentSecrets:
-              - Name: DB_SECRET_JSON
-                Value: !Ref DatabaseSecretArn
-              - Name: JWT_SECRET_JSON
+              - Name: DATABASE_URL
+                Value: !Sub '${DatabaseSecretArn}:url::'
+              - Name: JWT_SECRET
                 Value: !Ref AppSecretsArn
         AutoDeploymentsEnabled: false # Let GitHub Actions trigger deployments manually
 

@@ -110,6 +110,91 @@ Resources:
       
       DBParameterGroupName: !Ref DBParameterGroup
 
+  # --- Custom Resource to append 'url' key to the database secret ---
+  UpdateSecretFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: UpdateSecretAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:UpdateSecret
+                Resource: !Ref DatabaseSecretArn
+        - PolicyName: CloudWatchLogsScopedAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+
+  UpdateSecretFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt UpdateSecretFunctionRole.Arn
+      Runtime: python3.9
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import cfnresponse
+          from urllib.parse import quote
+          
+          def handler(event, context):
+              try:
+                  if event['RequestType'] == 'Delete':
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+                      return
+                  
+                  secret_arn = event['ResourceProperties']['SecretArn']
+                  db_host = event['ResourceProperties']['DBHost']
+                  db_port = event['ResourceProperties']['DBPort']
+                  db_name = event['ResourceProperties']['DBName']
+                  
+                  client = boto3.client('secretsmanager')
+                  resp = client.get_secret_value(SecretId=secret_arn)
+                  
+                  secret_dict = json.loads(resp['SecretString'])
+                  
+                  password = secret_dict.get('password', '')
+                  username = secret_dict.get('username', 'postgres')
+                  
+                  # URI特殊文字をエスケープしてPrismaが安全にパースできるようにする
+                  url = f"postgresql://{quote(username, safe='')}:{quote(password, safe='')}@{db_host}:{db_port}/{db_name}?schema=public"
+                  secret_dict['url'] = url
+                  
+                  client.update_secret(SecretId=secret_arn, SecretString=json.dumps(secret_dict))
+                  
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {'Url': url})
+              except Exception as e:
+                  print(e)
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {})
+
+  UpdateSecretCustomResource:
+    Type: Custom::SecretUrlUpdater
+    DependsOn: DatabaseSecretAttachment
+    Properties:
+      ServiceToken: !GetAtt UpdateSecretFunction.Arn
+      SecretArn: !Ref DatabaseSecretArn
+      DBHost: !GetAtt DBInstance.Endpoint.Address
+      DBPort: !GetAtt DBInstance.Endpoint.Port
+      DBName: !Ref DBName
+
 Outputs:
   DBInstanceEndpoint:
     Value: !GetAtt DBInstance.Endpoint.Address
