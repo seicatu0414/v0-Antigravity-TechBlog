@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'TechBlog - RDS PostgreSQL Database'
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod]
+    Default: dev
+  
+  ProjectName:
+    Type: String
+    Default: techblog
+  
+  # --- Network Configuration ---
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  PrivateSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+  PrivateSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+  RDSSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+  
+  # --- Database Configuration ---
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+    Description: Use ARM-based t4g instances for cost efficiency
+    AllowedValues:
+      - db.t4g.micro
+      - db.t4g.small
+      - db.t4g.medium
+  
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+  
+  DBName:
+    Type: String
+    Default: techblog
+  
+  DBUsername:
+    Type: String
+    Default: postgres
+  
+  # The unified Secrets Manager secret ARN that stores connection info
+  DatabaseSecretArn:
+    Type: String
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, prod]
+
+Resources:
+  # --- DB Subnet Group ---
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub '${ProjectName}-${Environment}-subnet-group'
+      DBSubnetGroupDescription: Private subnets for RDS
+      SubnetIds:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+
+  # --- DB Parameter Group ---
+  DBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: PostgreSQL 16 parameters
+      Family: postgres16
+
+  # --- Update the Database Secret with RDS details ---
+  DatabaseSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref DatabaseSecretArn
+      TargetId: !Ref DBInstance
+      TargetType: AWS::RDS::DBInstance
+
+  # --- RDS Instance ---
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub '${ProjectName}-${Environment}-db'
+      Engine: postgres
+      EngineVersion: '16.4'
+      DBInstanceClass: !Ref DBInstanceClass
+      
+      # Storage
+      AllocatedStorage: !Ref DBAllocatedStorage
+      StorageType: gp3 # using gp3 which is cheaper and better than gp2
+      StorageEncrypted: true
+      
+      # Network
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups: [!Ref RDSSecurityGroupId]
+      PubliclyAccessible: false
+      
+      # Auth Config
+      DBName: !Ref DBName
+      MasterUsername: !Ref DBUsername
+      # Fetch the auto-generated password from SECRETS MANAGER directly using the exact ARN
+      MasterPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DatabaseSecretArn, ':SecretString:password}}']]
+      
+      # Optimization settings depending on env
+      MultiAZ: !If [IsProd, true, false]
+      BackupRetentionPeriod: !If [IsProd, 14, 1]
+      DeletionProtection: !If [IsProd, true, false]
+      
+      DBParameterGroupName: !Ref DBParameterGroup
+
+Outputs:
+  DBInstanceEndpoint:
+    Value: !GetAtt DBInstance.Endpoint.Address
+  DBInstancePort:
+    Value: !GetAtt DBInstance.Endpoint.Port

@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'TechBlog - IAM Roles for App Runner and CI/CD'
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod]
+    Default: dev
+  
+  ProjectName:
+    Type: String
+    Default: techblog
+  
+  ImagesBucketArn:
+    Type: String
+    Description: S3 Images bucket ARN (for App Runner access)
+  
+  GitHubRepoName:
+    Type: String
+    Description: 'GitHub Repository string in "owner/repo" format'
+    Default: 'seicatu0414/v0-Antigravity-TechBlog'
+
+Resources:
+  # --- App Runner Instance Role ---
+  AppRunnerInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-${Environment}-app-runner-instance'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: tasks.apprunner.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        # Access specifically to App Runner CloudWatch logs (Not Full CW Access)
+        - PolicyName: CloudWatchLogsScopedAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/apprunner/${ProjectName}-*:*'
+        
+        # Access to S3 images bucket
+        - PolicyName: S3BucketAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub '${ImagesBucketArn}/*'
+              - Effect: Allow
+                Action: [s3:ListBucket]
+                Resource: !Ref ImagesBucketArn
+
+        # Access to specific Secrets in Secrets Manager
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue]
+                Resource: 
+                  - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${ProjectName}/${Environment}/*'
+
+  # --- App Runner Access Role (Controls ECR Image Pulls) ---
+  AppRunnerAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-${Environment}-app-runner-ecr-access'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: build.apprunner.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess
+
+  # --- GitHub OIDC Provider ---
+  # Only creates the provider if this stack manages it. Note: If an OIDC provider for
+  # token.actions.githubusercontent.com already exists in your account, stack creation may fail.
+  GitHubOIDCProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+
+  # --- GitHub Actions OIDC Role ---
+  GitHubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-${Environment}-github-actions'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com'
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com'
+              StringLike:
+                # Scoped specifically to this repository, unlike the previous generic "repo:*"
+                'token.actions.githubusercontent.com:sub': !Sub 'repo:${GitHubRepoName}:*'
+      Policies:
+        - PolicyName: ECRDeployAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [ecr:GetAuthorizationToken]
+                Resource: '*'
+              - Effect: Allow
+                # Allowing push access to Project ECR repositories
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:PutImage
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                Resource: !Sub 'arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ProjectName}-*'
+        
+        - PolicyName: AppRunnerDeployAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [apprunner:StartDeployment, apprunner:DescribeService]
+                Resource: !Sub 'arn:aws:apprunner:${AWS::Region}:${AWS::AccountId}:service/${ProjectName}-*'
+
+Outputs:
+  AppRunnerInstanceRoleArn:
+    Value: !GetAtt AppRunnerInstanceRole.Arn
+  AppRunnerAccessRoleArn:
+    Value: !GetAtt AppRunnerAccessRole.Arn
+  GitHubActionsRoleArn:
+    Value: !GetAtt GitHubActionsRole.Arn

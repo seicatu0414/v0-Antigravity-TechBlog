@@ -1,0 +1,18 @@
+[
+    {
+        "ParameterKey": "Environment",
+        "ParameterValue": "dev"
+    },
+    {
+        "ParameterKey": "ProjectName",
+        "ParameterValue": "techblog"
+    },
+    {
+        "ParameterKey": "TemplateBucketName",
+        "ParameterValue": "techblog-cfn-templates-bucket-name"
+    },
+    {
+        "ParameterKey": "TemplatePrefix",
+        "ParameterValue": "infrastructure/stacks/"
+    }
+]

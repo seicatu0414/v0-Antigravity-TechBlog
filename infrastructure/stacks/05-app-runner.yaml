@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'TechBlog - App Runner Service for Next.js'
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod]
+    Default: dev
+  ProjectName:
+    Type: String
+    Default: techblog
+  
+  # --- Network ---
+  VPCConnectorSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+  PrivateSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+  PrivateSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+  
+  # --- IAM Roles ---
+  AppRunnerInstanceRoleArn:
+    Type: String
+  AppRunnerAccessRoleArn:
+    Type: String
+  
+  # --- Secrets & Storage ---
+  S3BucketName:
+    Type: String
+  DatabaseSecretArn:
+    Type: String
+  AppSecretsArn:
+    Type: String
+
+  # --- ECR Configuration ---
+  ECRRepositoryName:
+    Type: String
+    Default: techblog-app
+  ImageTag:
+    Type: String
+    Default: latest
+
+Resources:
+  # --- App Runner VPC Connector ---
+  VPCConnector:
+    Type: AWS::AppRunner::VpcConnector
+    Properties:
+      VpcConnectorName: !Sub '${ProjectName}-${Environment}-vpc-connector'
+      Subnets:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+      SecurityGroups:
+        - !Ref VPCConnectorSecurityGroupId
+
+  # --- ECR Lifecycle Policy (Optional but creates the ECR Repo if it doesn't exist) ---
+  ECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub '${ECRRepositoryName}-${Environment}'
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 30 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 30
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+
+  # --- App Runner Service ---
+  AppRunnerService:
+    Type: AWS::AppRunner::Service
+    DependsOn: [VPCConnector] # Service needs VPC Connector to be ready
+    Properties:
+      ServiceName: !Sub '${ProjectName}-${Environment}-web'
+      SourceConfiguration:
+        AuthenticationConfiguration:
+          AccessRoleArn: !Ref AppRunnerAccessRoleArn
+        ImageRepository:
+          ImageRepositoryType: ECR
+          ImageIdentifier: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}-${Environment}:${ImageTag}'
+          ImageConfiguration:
+            Port: '3000' # Next.js Default Port
+            RuntimeEnvironmentVariables:
+              - Name: NODE_ENV
+                Value: production
+              - Name: APP_REGION
+                Value: !Ref AWS::Region
+              - Name: NEXT_PUBLIC_S3_ASSETS_BUCKET
+                Value: !Ref S3BucketName
+              - Name: S3_ASSETS_BUCKET
+                Value: !Ref S3BucketName
+              # Application-specific env vars
+              - Name: NEXT_TELEMETRY_DISABLED
+                Value: '1'
+            RuntimeEnvironmentSecrets:
+              - Name: DB_SECRET_JSON
+                Value: !Ref DatabaseSecretArn
+              - Name: JWT_SECRET_JSON
+                Value: !Ref AppSecretsArn
+        AutoDeploymentsEnabled: false # Let GitHub Actions trigger deployments manually
+
+      InstanceConfiguration:
+        Cpu: '1 vCPU'
+        Memory: '2 GB'
+        InstanceRoleArn: !Ref AppRunnerInstanceRoleArn
+      
+      NetworkConfiguration:
+        EgressConfiguration:
+          EgressType: VPC
+          VpcConnectorArn: !GetAtt VPCConnector.VpcConnectorArn
+        IngressConfiguration:
+          IsPubliclyAccessible: true
+        IpAddressType: IPV4
+      
+      HealthCheckConfiguration:
+        Protocol: HTTP
+        Path: '/api/health' # Assume the app has this healthcheck
+        Interval: 10
+        Timeout: 5
+        HealthyThreshold: 1
+        UnhealthyThreshold: 5
+
+Outputs:
+  AppRunnerServiceUrl:
+    Value: !GetAtt AppRunnerService.ServiceUrl
+  ECRRepositoryUri:
+    Value: !GetAtt ECRRepository.RepositoryUri

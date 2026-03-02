@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'TechBlog - Main Infrastructure Stack'
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod]
+    Default: dev
+  
+  ProjectName:
+    Type: String
+    Default: techblog
+  
+  # For organizing nested templates
+  TemplateBucketName:
+    Type: String
+    Description: S3 Bucket Name containing the nested CloudFormation templates
+  TemplatePrefix:
+    Type: String
+    Description: Prefix in S3 where templates are stored
+    Default: 'infrastructure/stacks/'
+
+Resources:
+  # --- 1. Network Stack ---
+  VPCNetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${TemplatePrefix}01-vpc-network.yaml'
+      Parameters:
+        Environment: !Ref Environment
+        ProjectName: !Ref ProjectName
+
+  # --- 2. Identity and Access Management Stack ---
+  # We deploy IAM before other resources since they need role ARNs
+  IAMStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${TemplatePrefix}02-iam-roles.yaml'
+      Parameters:
+        Environment: !Ref Environment
+        ProjectName: !Ref ProjectName
+        # Dynamic injection based on account details
+        ImagesBucketArn: !Sub 'arn:aws:s3:::${ProjectName}-${Environment}-assets-${AWS::AccountId}'
+        GitHubRepoName: 'seicatu0414/v0-Antigravity-TechBlog' # Configure based on your repo
+
+  # --- 3. S3 & Secrets Stack ---
+  S3SecretsStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [IAMStack]
+    Properties:
+      TemplateURL: !Sub 'https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${TemplatePrefix}03-s3-secrets.yaml'
+      Parameters:
+        Environment: !Ref Environment
+        ProjectName: !Ref ProjectName
+        AppRunnerRoleArn: !GetAtt IAMStack.Outputs.AppRunnerInstanceRoleArn
+
+  # --- 4. RDS Stack ---
+  RDSStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VPCNetworkStack, S3SecretsStack]
+    Properties:
+      TemplateURL: !Sub 'https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${TemplatePrefix}04-rds-postgres.yaml'
+      Parameters:
+        Environment: !Ref Environment
+        ProjectName: !Ref ProjectName
+        VpcId: !GetAtt VPCNetworkStack.Outputs.VPCId
+        PrivateSubnet1Id: !GetAtt VPCNetworkStack.Outputs.PrivateSubnet1Id
+        PrivateSubnet2Id: !GetAtt VPCNetworkStack.Outputs.PrivateSubnet2Id
+        RDSSecurityGroupId: !GetAtt VPCNetworkStack.Outputs.RDSSecurityGroupId
+        DatabaseSecretArn: !GetAtt S3SecretsStack.Outputs.DatabaseSecretArn
+
+  # --- 5. App Runner Stack ---
+  AppRunnerStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VPCNetworkStack, IAMStack, S3SecretsStack, RDSStack]
+    Properties:
+      TemplateURL: !Sub 'https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${TemplatePrefix}05-app-runner.yaml'
+      Parameters:
+        Environment: !Ref Environment
+        ProjectName: !Ref ProjectName
+        VPCConnectorSecurityGroupId: !GetAtt VPCNetworkStack.Outputs.VPCConnectorSecurityGroupId
+        PrivateSubnet1Id: !GetAtt VPCNetworkStack.Outputs.PrivateSubnet1Id
+        PrivateSubnet2Id: !GetAtt VPCNetworkStack.Outputs.PrivateSubnet2Id
+        AppRunnerInstanceRoleArn: !GetAtt IAMStack.Outputs.AppRunnerInstanceRoleArn
+        AppRunnerAccessRoleArn: !GetAtt IAMStack.Outputs.AppRunnerAccessRoleArn
+        S3BucketName: !GetAtt S3SecretsStack.Outputs.AssetsBucketName
+        DatabaseSecretArn: !GetAtt S3SecretsStack.Outputs.DatabaseSecretArn
+        AppSecretsArn: !GetAtt S3SecretsStack.Outputs.AppSecretsArn
+
+Outputs:
+  AppRunnerUrl:
+    Description: Your TechBlog App Runner Endpoint URL
+    Value: !GetAtt AppRunnerStack.Outputs.AppRunnerServiceUrl
+  
+  GitHubOIDCDeployRole:
+    Description: GitHub Actions Role to use in the CI/CD Pipeline
+    Value: !GetAtt IAMStack.Outputs.GitHubActionsRoleArn
