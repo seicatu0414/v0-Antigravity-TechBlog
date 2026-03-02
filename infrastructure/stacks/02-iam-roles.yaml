@@ -20,6 +20,11 @@ Parameters:
     Description: 'GitHub Repository string in "owner/repo" format'
     Default: 'seicatu0414/v0-Antigravity-TechBlog'
     
+  DeploymentBranch:
+    Type: String
+    Description: 'GitHub Branch allowed to assume this role for deployment'
+    Default: 'main'
+    
   ExistingOIDCProviderArn:
     Type: String
     Description: 'ARN of an existing GitHub OIDC Provider. Leave empty to create a new one.'
@@ -119,9 +124,8 @@ Resources:
             Condition:
               StringEquals:
                 'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com'
-              StringLike:
-                # Scoped specifically to this repository, unlike the previous generic "repo:*"
-                'token.actions.githubusercontent.com:sub': !Sub 'repo:${GitHubRepoName}:*'
+                # Scoped securely to a specific branch in the repository
+                'token.actions.githubusercontent.com:sub': !Sub 'repo:${GitHubRepoName}:ref:refs/heads/${DeploymentBranch}'
       Policies:
         - PolicyName: ECRDeployAccess
           PolicyDocument:

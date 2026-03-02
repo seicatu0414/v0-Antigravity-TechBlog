@@ -20,6 +20,11 @@ Parameters:
     Description: Prefix in S3 where templates are stored
     Default: 'infrastructure/stacks/'
     
+  DeploymentBranch:
+    Type: String
+    Description: 'GitHub Branch allowed to trigger deployments'
+    Default: 'main'
+    
   GitHubOIDCProviderArn:
     Type: String
     Description: '(Optional) ARN of an existing GitHub OIDC Provider in this account'
@@ -47,6 +52,7 @@ Resources:
         # Dynamic injection based on account details
         ImagesBucketArn: !Sub 'arn:aws:s3:::${ProjectName}-${Environment}-assets-${AWS::AccountId}'
         GitHubRepoName: 'seicatu0414/v0-Antigravity-TechBlog' # Configure based on your repo
+        DeploymentBranch: !Ref DeploymentBranch
         ExistingOIDCProviderArn: !Ref GitHubOIDCProviderArn
 
   # --- 3. S3 & Secrets Stack ---

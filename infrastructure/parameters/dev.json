@@ -16,6 +16,10 @@
         "ParameterValue": "infrastructure/stacks/"
     },
     {
+        "ParameterKey": "DeploymentBranch",
+        "ParameterValue": "main"
+    },
+    {
         "ParameterKey": "GitHubOIDCProviderArn",
         "ParameterValue": ""
     }
