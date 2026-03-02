@@ -35,12 +35,18 @@ aws s3 sync ./infrastructure/stacks s3://my-techblog-cfn-templates/infrastructur
 ### Step 3: Configure Parameters
 Edit the `infrastructure/parameters/dev.json` file and update the `TemplateBucketName` to the bucket you created in Step 1.
 
+If your AWS account already has a GitHub OIDC Provider configured (for `token.actions.githubusercontent.com`), find its ARN in the IAM Console and set it as `GitHubOIDCProviderArn` in the parameters JSON. Otherwise, leave it empty `""` to let this stack create it.
+
 ```json
 [
   // ...
   {
     "ParameterKey": "TemplateBucketName",
     "ParameterValue": "my-techblog-cfn-templates" // UPDATE THIS
+  },
+  {
+    "ParameterKey": "GitHubOIDCProviderArn",
+    "ParameterValue": "" // UPDATE THIS (Optional)
   }
 ]
 ```

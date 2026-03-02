@@ -19,6 +19,14 @@ Parameters:
     Type: String
     Description: 'GitHub Repository string in "owner/repo" format'
     Default: 'seicatu0414/v0-Antigravity-TechBlog'
+    
+  ExistingOIDCProviderArn:
+    Type: String
+    Description: 'ARN of an existing GitHub OIDC Provider. Leave empty to create a new one.'
+    Default: ''
+
+Conditions:
+  CreateOIDCProvider: !Equals [!Ref ExistingOIDCProviderArn, '']
 
 Resources:
   # --- App Runner Instance Role ---
@@ -85,10 +93,10 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess
 
   # --- GitHub OIDC Provider ---
-  # Only creates the provider if this stack manages it. Note: If an OIDC provider for
-  # token.actions.githubusercontent.com already exists in your account, stack creation may fail.
+  # Only creates the provider if ExistingOIDCProviderArn is empty.
   GitHubOIDCProvider:
     Type: AWS::IAM::OIDCProvider
+    Condition: CreateOIDCProvider
     Properties:
       Url: https://token.actions.githubusercontent.com
       ClientIdList:
@@ -106,7 +114,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com'
+              Federated: !If [CreateOIDCProvider, !Ref GitHubOIDCProvider, !Ref ExistingOIDCProviderArn]
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:

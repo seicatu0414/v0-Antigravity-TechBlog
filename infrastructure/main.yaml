@@ -19,6 +19,11 @@ Parameters:
     Type: String
     Description: Prefix in S3 where templates are stored
     Default: 'infrastructure/stacks/'
+    
+  GitHubOIDCProviderArn:
+    Type: String
+    Description: '(Optional) ARN of an existing GitHub OIDC Provider in this account'
+    Default: ''
 
 Resources:
   # --- 1. Network Stack ---
@@ -42,6 +47,7 @@ Resources:
         # Dynamic injection based on account details
         ImagesBucketArn: !Sub 'arn:aws:s3:::${ProjectName}-${Environment}-assets-${AWS::AccountId}'
         GitHubRepoName: 'seicatu0414/v0-Antigravity-TechBlog' # Configure based on your repo
+        ExistingOIDCProviderArn: !Ref GitHubOIDCProviderArn
 
   # --- 3. S3 & Secrets Stack ---
   S3SecretsStack:

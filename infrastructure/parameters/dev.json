@@ -14,5 +14,9 @@
     {
         "ParameterKey": "TemplatePrefix",
         "ParameterValue": "infrastructure/stacks/"
+    },
+    {
+        "ParameterKey": "GitHubOIDCProviderArn",
+        "ParameterValue": ""
     }
 ]
